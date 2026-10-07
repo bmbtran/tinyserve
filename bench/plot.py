@@ -27,7 +27,7 @@ LABEL = {"tinyserve": "tinyserve", "vllm": "vLLM", "reference": "z-lab reference
 plt.rcParams.update({
     "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "axes.edgecolor": GRID, "axes.labelcolor": INK2,
     "xtick.color": INK2, "ytick.color": INK2, "text.color": INK, "axes.grid": True, "grid.color": GRID,
-    "grid.linewidth": 0.8, "axes.spines.top": False, "axes.spines.right": False, "font.size": 10,
+    "grid.linewidth": 0.8, "axes.axisbelow": True, "axes.spines.top": False, "axes.spines.right": False, "font.size": 10,
     "legend.frameon": False, "axes.titlesize": 12, "axes.titleweight": "bold", "axes.titlelocation": "left",
 })
 
