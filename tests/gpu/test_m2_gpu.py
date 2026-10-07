@@ -75,16 +75,12 @@ def test_a_flash_vs_torch_backend(flash_engine, report):
     # Diagnostic (does not change the threshold): how far is EACH bf16 backend
     # from a float32 run of the same weights? If both are equally far, the
     # flash/torch gap is bf16 noise, not a backend bug.
-    import copy
+    from tinyserve.loader import load_weights
+    from tinyserve.models.qwen3 import Qwen3ForCausalLM
 
-    caches = [(l.k_cache, l.v_cache) for l in flash_engine.runner.layers]
-    for l in flash_engine.runner.layers:
-        l.k_cache = l.v_cache = torch.tensor([])
-    m32 = copy.deepcopy(flash_engine.runner.model).float()
-    for (kc, vc), l in zip(caches, flash_engine.runner.layers):
-        l.k_cache, l.v_cache = kc, vc
-    for l in m32.attention_layers():
-        l.backend = backend_torch
+    with torch.device("cuda"):
+        m32 = Qwen3ForCausalLM(flash_engine.hf_config, backend="torch", max_positions=4096, dtype=torch.float32)
+    load_weights(m32, flash_engine.model_path)
     l32 = full_prefill_logits(m32, seqs)
     del m32
     torch.cuda.empty_cache()
