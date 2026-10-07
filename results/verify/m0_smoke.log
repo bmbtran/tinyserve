@@ -1,0 +1,16 @@
+torch=2.8.0+cu128 cuda=12.8 triton=3.4.0
+torch._C._GLIBCXX_USE_CXX11_ABI=True
+GPU NVIDIA L4 capability=(8, 9)
+name, driver_version, memory.total [MiB]
+NVIDIA L4, 580.95.05, 23034 MiB
+flash_attn=2.8.3.post1 wheel=flash_attn-2.8.3.post1+cu12torch2.8cxx11abiTRUE-cp312-cp312-linux_x86_64.whl
+FA_OK paged_kvcache max_abs_err=9.64e-04 <1e-2 vs torch reference
+  varlen causal=True max_abs_err=1.29e-03
+  varlen causal=False max_abs_err=1.17e-03
+FA_VARLEN_BLOCKTABLE_OK
+FA_PAD_ROWS finite=True (cache_seqlens=1, block 0)
+FA_PAD_ROWS_ZERO_LEN ok finite_real_row=True
+TRITON_OK
+weights cached: Qwen/Qwen3-0.6B
+weights cached: Qwen/Qwen3-4B
+weights cached: z-lab/Qwen3-4B-DFlash-b16

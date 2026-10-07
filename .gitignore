@@ -17,3 +17,5 @@ models/
 .DS_Store
 Thumbs.db
 results/tmp/
+!results/verify/*.log
+!results/bench/*.log
