@@ -426,13 +426,14 @@ def _bench_suite(engine: str, suite: str, version: str) -> dict:
 
             p3, st = _with_server(_server_cmd(engine, M06, prefix_cache=False), core_off)
             record("W2_cacheoff", M06, "W2", {"prefix_cache": False, **w2cfg}, p3, st)
-    elif suite == "spec":
+    elif suite in ("spec", "spec_dflash"):
         data = {d: [{"messages": r["messages"], "max_tokens": 512} for r in load_chat(d)] for d in SPEC_DATASETS}
 
         def n_for(c):  # budget: fewer requests at low concurrency
             return min(32, 8 * c)
 
-        for dflash in (False, True):
+        # "spec_dflash" (M9c re-run): DFlash only, after CUDA graphs for the verify step landed.
+        for dflash in ((True,) if suite == "spec_dflash" else (False, True)):
             def spec_run():
                 warmup(M4B, "chat", [{**r, "max_tokens": 32} for r in data["gsm8k"]])
                 pts = {"gsm8k": _run_points(engine, M4B, "chat", lambda c: data["gsm8k"][: n_for(c)], W3_SWEEP, dflash, repeat=(1,))}
@@ -441,9 +442,10 @@ def _bench_suite(engine: str, suite: str, version: str) -> dict:
                 return pts
 
             pts, st = _with_server(_server_cmd(engine, M4B, dflash=dflash), spec_run)
-            tag = "dflash" if dflash else "base"
+            tag = ("dflash" if dflash else "base") + ("_graphs" if suite == "spec_dflash" else "")
             for d, p in pts.items():
                 record(f"W3-{d}_{tag}", M4B, f"W3-{d}", {"spec": "dflash" if dflash else None, "max_tokens": 512,
+                                                      "spec_verify_cuda_graphs": suite == "spec_dflash" and engine == "tinyserve",
                                                       "num_requests": "min(32, 8*c)", "temperature": 0, "enable_thinking": False}, p, st)
     else:
         raise ValueError(suite)
