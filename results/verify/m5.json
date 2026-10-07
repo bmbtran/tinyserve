@@ -1,0 +1,61 @@
+{
+  "metrics": {
+    "a_exact": "32/32",
+    "a_exact_or_near_tie": "32/32",
+    "a_divergences": [],
+    "itl_sweep": {
+      "1": {
+        "graph_ms": 7.754,
+        "eager_ms": 39.075,
+        "speedup": 5.04
+      },
+      "2": {
+        "graph_ms": 8.091,
+        "eager_ms": 40.115,
+        "speedup": 4.96
+      },
+      "4": {
+        "graph_ms": 8.184,
+        "eager_ms": 39.751,
+        "speedup": 4.86
+      },
+      "8": {
+        "graph_ms": 8.598,
+        "eager_ms": 41.221,
+        "speedup": 4.79
+      },
+      "16": {
+        "graph_ms": 8.891,
+        "eager_ms": 40.838,
+        "speedup": 4.59
+      },
+      "32": {
+        "graph_ms": 10.177,
+        "eager_ms": 40.95,
+        "speedup": 4.02
+      },
+      "64": {
+        "graph_ms": 12.615,
+        "eager_ms": 40.689,
+        "speedup": 3.23
+      },
+      "128": {
+        "graph_ms": 17.368,
+        "eager_ms": 41.315,
+        "speedup": 2.38
+      }
+    },
+    "b_bs1_graph_eager_ratio": 0.198,
+    "c_bs32_graph_ms": 10.177,
+    "c_bs32_eager_ms": 40.95
+  },
+  "tests": {
+    "test_a_graph_vs_eager_outputs": "passed",
+    "test_b_c_itl": "passed"
+  },
+  "status": "PASS",
+  "finished_utc": "2026-10-07 02:01:39",
+  "git_sha": "58f0cf1",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 0
+}

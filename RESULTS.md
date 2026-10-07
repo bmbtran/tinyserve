@@ -307,3 +307,32 @@ tests/gpu/test_m4_gpu.py:74: AssertionError
 FAILED tests/gpu/test_m4_gpu.py::test_prefix_cache_on_vs_off - assert (14 >= 31)
 1 failed in 43.76s
 ```
+
+## M5 (GPU) — 2026-10-07 02:01:59 UTC — git `58f0cf1`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m5`
+Source file: `results/verify/m5.log`
+Note: PASS: graph==eager 32/32 exact; bs=1 ITL 7.75ms vs 39.07ms eager (0.198); bs=32 10.18ms vs 40.95ms.
+
+```text
+captured graphs for batch sizes [1, 2, 4, 8, 16, 32, 64, 128]
+M5a graph vs eager: exact=32/32 (>=31) exact_or_near_tie=32/32 (32)
+.  bs=  1: graph 7.75 ms  eager 39.07 ms  speedup 5.04x
+  bs=  2: graph 8.09 ms  eager 40.11 ms  speedup 4.96x
+  bs=  4: graph 8.18 ms  eager 39.75 ms  speedup 4.86x
+  bs=  8: graph 8.60 ms  eager 41.22 ms  speedup 4.79x
+  bs= 16: graph 8.89 ms  eager 40.84 ms  speedup 4.59x
+  bs= 32: graph 10.18 ms  eager 40.95 ms  speedup 4.02x
+  bs= 64: graph 12.61 ms  eager 40.69 ms  speedup 3.23x
+  bs=128: graph 17.37 ms  eager 41.32 ms  speedup 2.38x
+M5b bs=1 ITL p50 graph/eager=0.198 (<=0.67)
+M5c bs=32 step graph=10.177ms eager=40.95ms (graph<=eager)
+.
+M5 PASS a_exact=32/32 a_exact_or_near_tie=32/32 b_bs1_graph_eager_ratio=0.198 c_bs32_graph_ms=10.177 c_bs32_eager_ms=40.95
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m5_gpu.py::test_a_graph_vs_eager_outputs
+PASSED tests/gpu/test_m5_gpu.py::test_b_c_itl
+2 passed in 51.88s
+```
