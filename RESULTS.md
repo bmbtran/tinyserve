@@ -617,3 +617,388 @@ M9 PASS bs1_eager_tok_s=83.9 bs1_graph_tok_s=112.1 bs1_speedup_graph_vs_eager=1.
 PASSED tests/gpu/test_m9_gpu.py::test_spec_verify_graphs
 1 passed in 191.16s (0:03:11)
 ```
+
+## DoD: Modal apps — 2026-10-07 03:35:29 UTC — git `24c9989`
+
+Command: `uv run modal app list --json`  (exit code 0)
+
+```text
+[
+  {
+    "app_id": "ap-WoP1nHSUmOWO4QzpJ9VWKV",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 20:27:20-07:00",
+    "stopped_at": "2026-10-06 20:32:25-07:00"
+  },
+  {
+    "app_id": "ap-ll2dRkd58VMLCLpQOhXa2K",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 20:23:23-07:00",
+    "stopped_at": "2026-10-06 20:27:01-07:00"
+  },
+  {
+    "app_id": "ap-izQYODgaz3bj25AVRie260",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:57:45-07:00",
+    "stopped_at": "2026-10-06 19:59:38-07:00"
+  },
+  {
+    "app_id": "ap-2hLNEhl9BMpAhCfwByAxv7",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:57:20-07:00",
+    "stopped_at": "2026-10-06 20:19:59-07:00"
+  },
+  {
+    "app_id": "ap-WAM75f1hhJTLBuNWtrTaRV",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:55:32-07:00",
+    "stopped_at": "2026-10-06 20:14:05-07:00"
+  },
+  {
+    "app_id": "ap-4R8d5KChwLTf5ZmHdtXFQm",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:41:24-07:00",
+    "stopped_at": "2026-10-06 19:57:06-07:00"
+  },
+  {
+    "app_id": "ap-YmlMF4FXjUm5fCrwJP6JxH",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:35:36-07:00",
+    "stopped_at": "2026-10-06 19:54:45-07:00"
+  },
+  {
+    "app_id": "ap-IO5kImA8r9sbAOt9Td2wc0",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:35:36-07:00",
+    "stopped_at": "2026-10-06 19:41:10-07:00"
+  },
+  {
+    "app_id": "ap-yvhiwzlDfe912ZsOlieJ3Q",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:29:40-07:00",
+    "stopped_at": "2026-10-06 19:33:42-07:00"
+  },
+  {
+    "app_id": "ap-rBW96BjXZSNwRCzVEsErx1",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:24:36-07:00",
+    "stopped_at": "2026-10-06 19:29:12-07:00"
+  },
+  {
+    "app_id": "ap-nhE3hbjt64FQ8lLGwBGL0c",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:19:55-07:00",
+    "stopped_at": "2026-10-06 19:32:16-07:00"
+  },
+  {
+    "app_id": "ap-Lw2e4kxII9cIDOdXySvXoX",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:05:32-07:00",
+    "stopped_at": "2026-10-06 19:09:17-07:00"
+  },
+  {
+    "app_id": "ap-nGbP3bvkIf30UGvRZLzPBc",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 19:00:27-07:00",
+    "stopped_at": "2026-10-06 19:01:49-07:00"
+  },
+  {
+    "app_id": "ap-BhsnCOSy0w6QjPhhHvMxvi",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 18:57:56-07:00",
+    "stopped_at": "2026-10-06 18:59:13-07:00"
+  },
+  {
+    "app_id": "ap-TvKadfOouXDsFyvW4VJjXG",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 18:49:18-07:00",
+    "stopped_at": "2026-10-06 18:55:33-07:00"
+  },
+  {
+    "app_id": "ap-VWaZTjwxFzg1TOz2UfQNPa",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 18:40:36-07:00",
+    "stopped_at": "2026-10-06 18:44:30-07:00"
+  },
+  {
+    "app_id": "ap-1avocjq9UivLFhFJI8AnZW",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 18:37:54-07:00",
+    "stopped_at": "2026-10-06 18:40:16-07:00"
+  },
+  {
+    "app_id": "ap-TnqzdDqTqE0OztqBFotp2c",
+    "description": "tinyserve",
+    "state": "stopped",
+    "tasks": "0",
+    "created_at": "2026-10-06 18:35:29-07:00",
+    "stopped_at": "2026-10-06 18:36:59-07:00"
+  }
+]
+```
+
+## DoD: billing — 2026-10-07 03:35:37 UTC — git `24c9989`
+
+Command: `uv run modal billing report --for "this month" --json && uv run modal billing report --for today --show-resources`  (exit code 0)
+
+```text
+[
+  {
+    "object_id": "ap-1aJZzABjDQmqrluUiMtwFG",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.01793253"
+  },
+  {
+    "object_id": "ap-1avocjq9UivLFhFJI8AnZW",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.03923860"
+  },
+  {
+    "object_id": "ap-2hLNEhl9BMpAhCfwByAxv7",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.41712797"
+  },
+  {
+    "object_id": "ap-4R8d5KChwLTf5ZmHdtXFQm",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.28799764"
+  },
+  {
+    "object_id": "ap-BhsnCOSy0w6QjPhhHvMxvi",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.01714652"
+  },
+  {
+    "object_id": "ap-IO5kImA8r9sbAOt9Td2wc0",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.09788408"
+  },
+  {
+    "object_id": "ap-Lw2e4kxII9cIDOdXySvXoX",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.01489590"
+  },
+  {
+    "object_id": "ap-TnqzdDqTqE0OztqBFotp2c",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.02234409"
+  },
+  {
+    "object_id": "ap-TvKadfOouXDsFyvW4VJjXG",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.10985803"
+  },
+  {
+    "object_id": "ap-VWaZTjwxFzg1TOz2UfQNPa",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.04034261"
+  },
+  {
+    "object_id": "ap-WAM75f1hhJTLBuNWtrTaRV",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.34013062"
+  },
+  {
+    "object_id": "ap-YmlMF4FXjUm5fCrwJP6JxH",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.35129738"
+  },
+  {
+    "object_id": "ap-izQYODgaz3bj25AVRie260",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.02999845"
+  },
+  {
+    "object_id": "ap-ll2dRkd58VMLCLpQOhXa2K",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.04406740"
+  },
+  {
+    "object_id": "ap-nGbP3bvkIf30UGvRZLzPBc",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.01924061"
+  },
+  {
+    "object_id": "ap-nhE3hbjt64FQ8lLGwBGL0c",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.22384751"
+  },
+  {
+    "object_id": "ap-rBW96BjXZSNwRCzVEsErx1",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.07069778"
+  },
+  {
+    "object_id": "ap-xQP2lA4wh6GtUoEpuz9F0y",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.00620672"
+  },
+  {
+    "object_id": "ap-yvhiwzlDfe912ZsOlieJ3Q",
+    "description": "tinyserve",
+    "environment": "main",
+    "interval_start": "2026-10-07T00:00:00",
+    "cost": "0.06829409"
+  }
+]
+┌────────────┬────────────┬────────────┬────────────┬────────────┬────────────┐
+│            │            │            │ Interval   │            │            │
+│ Object ID  │ Descripti… │ Environme… │ Start      │ Resource   │ Cost       │
+├────────────┼────────────┼────────────┼────────────┼────────────┼────────────┤
+│ ap-1aJZzA… │ tinyserve  │ main       │ 2026-10-07 │ Network    │ 0.00973048 │
+│            │            │            │            │ Egress     │            │
+│ ap-1aJZzA… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00067815 │
+│ ap-1aJZzA… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00752390 │
+│ ap-1avocj… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.02809782 │
+│ ap-1avocj… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00449565 │
+│ ap-1avocj… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00664513 │
+│ ap-2hLNEh… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.29866691 │
+│ ap-2hLNEh… │ tinyserve  │ main       │ 2026-10-07 │ Network    │ 4.3E-7     │
+│            │            │            │            │ Egress     │            │
+│ ap-2hLNEh… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.04778671 │
+│ ap-2hLNEh… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.07067393 │
+│ ap-4R8d5K… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.20622204 │
+│ ap-4R8d5K… │ tinyserve  │ main       │ 2026-10-07 │ Network    │ 2.4E-7     │
+│            │            │            │            │ Egress     │            │
+│ ap-4R8d5K… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.03299553 │
+│ ap-4R8d5K… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.04877983 │
+│ ap-BhsnCO… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.01227821 │
+│ ap-BhsnCO… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00196451 │
+│ ap-BhsnCO… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00290380 │
+│ ap-IO5kIm… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.07008457 │
+│ ap-IO5kIm… │ tinyserve  │ main       │ 2026-10-07 │ Network    │ 1.8E-7     │
+│            │            │            │            │ Egress     │            │
+│ ap-IO5kIm… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.01121353 │
+│ ap-IO5kIm… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.01658579 │
+│ ap-Lw2e4k… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.01066659 │
+│ ap-Lw2e4k… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00170665 │
+│ ap-Lw2e4k… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00252265 │
+│ ap-TnqzdD… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.01600007 │
+│ ap-TnqzdD… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00256001 │
+│ ap-TnqzdD… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00378402 │
+│ ap-TvKadf… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.07866669 │
+│ ap-TvKadf… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.01258667 │
+│ ap-TvKadf… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.01860467 │
+│ ap-VWaZTj… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.02888837 │
+│ ap-VWaZTj… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00462214 │
+│ ap-VWaZTj… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00683210 │
+│ ap-WAM75f… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.24355934 │
+│ ap-WAM75f… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.03896949 │
+│ ap-WAM75f… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.05760178 │
+│ ap-YmlMF4… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.25155559 │
+│ ap-YmlMF4… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.04024889 │
+│ ap-YmlMF4… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.05949290 │
+│ ap-izQYOD… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.02148117 │
+│ ap-izQYOD… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00343699 │
+│ ap-izQYOD… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00508030 │
+│ ap-ll2dRk… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.03155560 │
+│ ap-ll2dRk… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00504890 │
+│ ap-ll2dRk… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00746290 │
+│ ap-nGbP3b… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.01377774 │
+│ ap-nGbP3b… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00220444 │
+│ ap-nGbP3b… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00325843 │
+│ ap-nhE3hb… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.16029181 │
+│ ap-nhE3hb… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.02564669 │
+│ ap-nhE3hb… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.03790901 │
+│ ap-rBW96B… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.04456487 │
+│ ap-rBW96B… │ tinyserve  │ main       │ 2026-10-07 │ Network    │ 0.00057479 │
+│            │            │            │            │ Egress     │            │
+│ ap-rBW96B… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00726319 │
+│ ap-rBW96B… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.01829493 │
+│ ap-xQP2lA… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.00444448 │
+│ ap-xQP2lA… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00071112 │
+│ ap-xQP2lA… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.00105112 │
+│ ap-yvhiwz… │ tinyserve  │ main       │ 2026-10-07 │ L4         │ 0.04888862 │
+│ ap-yvhiwz… │ tinyserve  │ main       │ 2026-10-07 │ Network    │ 1.8E-7     │
+│            │            │            │            │ Egress     │            │
+│ ap-yvhiwz… │ tinyserve  │ main       │ 2026-10-07 │ Memory     │ 0.00782218 │
+│ ap-yvhiwz… │ tinyserve  │ main       │ 2026-10-07 │ CPU        │ 0.01158311 │
+└────────────┴────────────┴────────────┴────────────┴────────────┴────────────┘
+```
+
+## DoD: clean clone — 2026-10-07 03:39:39 UTC — git `24c9989`
+
+Command: `rm -rf ../tinyserve-verify && git clone -q . ../tinyserve-verify && cd ../tinyserve-verify && uv sync -q && uv run pytest tests/cpu -q -m "not slow"`  (exit code 0)
+
+```text
+........................................................................ [ 91%]
+.......                                                                  [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\tranb\projects\tinyserve-verify\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+79 passed, 1 deselected, 1 warning in 81.14s (0:01:21)
+warning: `VIRTUAL_ENV=C:\Users\tranb\projects\tinyserve\.venv` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+```
