@@ -70,6 +70,8 @@ def main() -> None:
     write("gsm8k.jsonl", gsm_rows)
     write("humaneval.jsonl", he_rows)
     write("mtbench.jsonl", mt_rows)
+    # Both turns, for the z-lab-harness protocol (turn 2 is conditioned on the model's own turn-1 answer).
+    write("mtbench_2turn.jsonl", [{"source": "mtbench", "id": int(mt[i]["prompt_id"]), "turns": list(mt[i]["prompt"])} for i in range(N)])
 
     rng = random.Random(0)
     mixed = gsm_rows[:16] + he_rows[:16] + mt_rows[:16] + [chat(t, "short", i) for i, t in enumerate(SHORT)]
