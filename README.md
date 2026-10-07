@@ -35,4 +35,4 @@ Artifacts: `results/verify/m3.json`, `results/verify/m3.log`.
   the last bit, and exact ties flip. The same code is exact in float64 on CPU (`tests/cpu/test_engine_batching.py`:
   batched, preempted, random-arrival == solo, token for token), so this is bf16 arithmetic, not
   scheduling or paging. The >= 60/64 target assumed bf16 greedy decoding is far more stable than it is
-  for 128-token outputs; ~40% of outputs hit at least one exact tie.
+  for 128-token outputs: 40/64 outputs reach a near-tie within 128 tokens, 20/64 an exact tie.
