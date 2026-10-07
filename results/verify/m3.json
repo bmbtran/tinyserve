@@ -1,0 +1,267 @@
+{
+  "metrics": {
+    "a_batched_wall_s": 10.76,
+    "a_exact": "24/64",
+    "a_exact_or_near_tie": "64/64",
+    "a_divergences": [
+      {
+        "i": 1,
+        "verdict": "near_tie",
+        "at": 32,
+        "gap": 0.0
+      },
+      {
+        "i": 3,
+        "verdict": "near_tie",
+        "at": 107,
+        "gap": 0.0
+      },
+      {
+        "i": 4,
+        "verdict": "near_tie",
+        "at": 30,
+        "gap": 0.125
+      },
+      {
+        "i": 5,
+        "verdict": "near_tie",
+        "at": 19,
+        "gap": 0.125
+      },
+      {
+        "i": 7,
+        "verdict": "near_tie",
+        "at": 56,
+        "gap": 0.0
+      },
+      {
+        "i": 8,
+        "verdict": "near_tie",
+        "at": 11,
+        "gap": 0.125
+      },
+      {
+        "i": 9,
+        "verdict": "near_tie",
+        "at": 3,
+        "gap": 0.125
+      },
+      {
+        "i": 12,
+        "verdict": "near_tie",
+        "at": 38,
+        "gap": 0.125
+      },
+      {
+        "i": 13,
+        "verdict": "near_tie",
+        "at": 38,
+        "gap": 0.0
+      },
+      {
+        "i": 14,
+        "verdict": "near_tie",
+        "at": 33,
+        "gap": 0.0
+      },
+      {
+        "i": 15,
+        "verdict": "near_tie",
+        "at": 89,
+        "gap": 0.0
+      },
+      {
+        "i": 16,
+        "verdict": "near_tie",
+        "at": 85,
+        "gap": 0.125
+      },
+      {
+        "i": 20,
+        "verdict": "near_tie",
+        "at": 41,
+        "gap": 0.0
+      },
+      {
+        "i": 21,
+        "verdict": "near_tie",
+        "at": 94,
+        "gap": 0.125
+      },
+      {
+        "i": 26,
+        "verdict": "near_tie",
+        "at": 22,
+        "gap": 0.125
+      },
+      {
+        "i": 28,
+        "verdict": "near_tie",
+        "at": 68,
+        "gap": 0.0
+      },
+      {
+        "i": 29,
+        "verdict": "near_tie",
+        "at": 65,
+        "gap": 0.0
+      },
+      {
+        "i": 30,
+        "verdict": "near_tie",
+        "at": 19,
+        "gap": 0.0
+      },
+      {
+        "i": 31,
+        "verdict": "near_tie",
+        "at": 44,
+        "gap": 0.0
+      },
+      {
+        "i": 32,
+        "verdict": "near_tie",
+        "at": 11,
+        "gap": 0.125
+      },
+      {
+        "i": 33,
+        "verdict": "near_tie",
+        "at": 27,
+        "gap": 0.125
+      },
+      {
+        "i": 34,
+        "verdict": "near_tie",
+        "at": 86,
+        "gap": 0.0
+      },
+      {
+        "i": 35,
+        "verdict": "near_tie",
+        "at": 26,
+        "gap": 0.125
+      },
+      {
+        "i": 36,
+        "verdict": "near_tie",
+        "at": 48,
+        "gap": 0.125
+      },
+      {
+        "i": 38,
+        "verdict": "near_tie",
+        "at": 72,
+        "gap": 0.0
+      },
+      {
+        "i": 39,
+        "verdict": "near_tie",
+        "at": 66,
+        "gap": 0.0
+      },
+      {
+        "i": 40,
+        "verdict": "near_tie",
+        "at": 28,
+        "gap": 0.0
+      },
+      {
+        "i": 41,
+        "verdict": "near_tie",
+        "at": 122,
+        "gap": 0.125
+      },
+      {
+        "i": 42,
+        "verdict": "near_tie",
+        "at": 74,
+        "gap": 0.125
+      },
+      {
+        "i": 46,
+        "verdict": "near_tie",
+        "at": 85,
+        "gap": 0.125
+      },
+      {
+        "i": 47,
+        "verdict": "near_tie",
+        "at": 39,
+        "gap": 0.125
+      },
+      {
+        "i": 49,
+        "verdict": "near_tie",
+        "at": 73,
+        "gap": 0.0
+      },
+      {
+        "i": 50,
+        "verdict": "near_tie",
+        "at": 3,
+        "gap": 0.0
+      },
+      {
+        "i": 53,
+        "verdict": "near_tie",
+        "at": 40,
+        "gap": 0.0
+      },
+      {
+        "i": 54,
+        "verdict": "near_tie",
+        "at": 10,
+        "gap": 0.125
+      },
+      {
+        "i": 55,
+        "verdict": "near_tie",
+        "at": 17,
+        "gap": 0.0
+      },
+      {
+        "i": 56,
+        "verdict": "near_tie",
+        "at": 3,
+        "gap": 0.125
+      },
+      {
+        "i": 57,
+        "verdict": "near_tie",
+        "at": 17,
+        "gap": 0.125
+      },
+      {
+        "i": 58,
+        "verdict": "near_tie",
+        "at": 113,
+        "gap": 0.25
+      },
+      {
+        "i": 61,
+        "verdict": "near_tie",
+        "at": 28,
+        "gap": 0.0
+      }
+    ],
+    "b_output_tok_s": 2004.0,
+    "b_total_tok_s": 6012.1,
+    "b_wall_s": 32.7,
+    "b_steps": {
+      "PREFILL": 16,
+      "DECODE": 510,
+      "SPEC": 0
+    },
+    "b_preemptions": 0
+  },
+  "tests": {
+    "test_a_batched_vs_sequential": "failed",
+    "test_b_offline_throughput": "passed"
+  },
+  "status": "FAIL",
+  "finished_utc": "2026-10-07 01:55:24",
+  "git_sha": "0f1c01a",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 1
+}

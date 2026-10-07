@@ -23,3 +23,16 @@ Artifacts: `results/verify/m2.json`, `results/verify/m2.log`.
   is also only 3/8 exact, 8/8 near-tie.** Exact agreement over 128 bf16 greedy tokens is not a
   property any two attention kernels have here, so the >= 7/8 target was unrealistic. Next time:
   compare at >= 8 decimal precision (fp32 on GPU) for exactness and keep bf16 for the near-tie rule only.
+
+### M3: batched vs sequential in bf16 (FAIL on the exact count; analysis)
+
+Artifacts: `results/verify/m3.json`, `results/verify/m3.log`.
+
+* **Batched (max_num_seqs=32) vs bs=1 sequential, 64 chat prompts x 128 tokens: 24/64 exact (target >= 60), 64/64 exact-or-near-tie.**
+  All 40 divergences happened where the bs=1 run's own top-1/top-2 logit gap was <= 0.25, and
+  **20 of them at a gap of exactly 0.0** (two vocabulary entries with the same bf16 logit). With a
+  batch of 32 instead of 1, cuBLAS picks different GEMM kernels, the bf16 hidden states differ in
+  the last bit, and exact ties flip. The same code is exact in float64 on CPU (`tests/cpu/test_engine_batching.py`:
+  batched, preempted, random-arrival == solo, token for token), so this is bf16 arithmetic, not
+  scheduling or paging. The >= 60/64 target assumed bf16 greedy decoding is far more stable than it is
+  for 128-token outputs; ~40% of outputs hit at least one exact tie.

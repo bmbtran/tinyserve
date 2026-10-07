@@ -180,3 +180,61 @@ FAILED tests/gpu/test_m2_gpu.py::test_a_flash_vs_torch_backend - assert (0.75...
 FAILED tests/gpu/test_m2_gpu.py::test_c_greedy_vs_hf_bf16 - assert (3 >= 7)
 2 failed, 1 passed in 117.23s (0:01:57)
 ```
+
+## M3 (CPU) — 2026-10-07 01:56:28 UTC — git `0f1c01a`
+
+Command: `uv run pytest tests/cpu/test_engine_batching.py -q`  (exit code 0)
+
+```text
+.....                                                                    [100%]
+5 passed in 18.45s
+```
+
+## M3 (GPU) — 2026-10-07 01:56:30 UTC — git `0f1c01a`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m3`
+Source file: `results/verify/m3.log`
+Note: M3a FAIL on exact count (24/64 vs >=60); 64/64 exact-or-near-tie. All 40 divergences at reference top1-top2 gap <= 0.25 (20 of them exactly 0.0 = bf16 tie). M3b: 2004 output tok/s eager (no threshold).
+
+```text
+KV blocks: 613 x 256 tokens
+M3a batched(32) vs sequential: exact=24/64 (>=60) exact_or_near_tie=64/64 (64)
+FM3b offline 256 x (in 512 / out 256), eager, max_num_seqs=128: 2004 output tok/s, 6012 total tok/s, wall 32.7s, steps {'PREFILL': 16, 'DECODE': 510, 'SPEC': 0}
+.
+M3 FAIL a_batched_wall_s=10.76 a_exact=24/64 a_exact_or_near_tie=64/64 b_output_tok_s=2004.0 b_total_tok_s=6012.1 b_wall_s=32.7 b_preemptions=0
+
+=================================== FAILURES ===================================
+_________________________ test_a_batched_vs_sequential _________________________
+
+engine = <tinyserve.engine.LLMEngine object at 0x2a690c630fe0>
+report = {'a_batched_wall_s': 10.76, 'a_exact': '24/64', 'a_exact_or_near_tie': '64/64', 'a_divergences': [{'i': 1, 'verdict': ..., {'i': 7, 'verdict': 'near_tie', 'at': 56, 'gap': 0.0}, {'i': 8, 'verdict': 'near_tie', 'at': 11, 'gap': 0.125}, ...]}
+
+    def test_a_batched_vs_sequential(engine, report):
+        rows = load_chat("mixed_prompts")
+        prompts = [engine.apply_chat_template(r["messages"]) for r in rows]
+        sp = SamplingParams(max_tokens=128)
+        engine.runner.record_gaps = True
+        seq_outs = [engine.generate([p], sp)[0] for p in prompts]  # bs = 1, one at a time
+        engine.runner.record_gaps = False
+        engine.cfg.max_num_seqs = 32
+        t = time.perf_counter()
+        batched = engine.generate(prompts, sp)
+        report["a_batched_wall_s"] = round(time.perf_counter() - t, 2)
+        engine.cfg.max_num_seqs = 128
+        verdicts = [compare_tokens(s["token_ids"], b["token_ids"], s["logit_gaps"]) for s, b in zip(seq_outs, batched)]
+        n_exact = sum(v[0] == "exact" for v in verdicts)
+        n_ok = sum(v[0] != "mismatch" for v in verdicts)
+        report["a_exact"] = f"{n_exact}/64"
+        report["a_exact_or_near_tie"] = f"{n_ok}/64"
+        report["a_divergences"] = [{"i": i, "verdict": v[0], "at": v[1], "gap": v[2]} for i, v in enumerate(verdicts) if v[0] != "exact"]
+        print(f"M3a batched(32) vs sequential: exact={n_exact}/64 (>=60) exact_or_near_tie={n_ok}/64 (64)")
+>       assert n_exact >= 60 and n_ok == 64
+E       assert (24 >= 60)
+
+tests/gpu/test_m3_gpu.py:45: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m3_gpu.py::test_b_offline_throughput
+FAILED tests/gpu/test_m3_gpu.py::test_a_batched_vs_sequential - assert (24 >=...
+1 failed, 1 passed in 345.23s (0:05:45)
+```
