@@ -58,6 +58,10 @@ class AsyncEngine:
     def tokenizer(self):
         return self.engine.tokenizer
 
+    @property
+    def cfg(self):
+        return self.engine.cfg
+
     def metrics(self) -> dict:
         return self.engine.metrics()
 

@@ -62,7 +62,7 @@ def _error(msg: str, code: int = 400) -> JSONResponse:
 
 def create_app(engine: AsyncEngine, model_name: str) -> FastAPI:
     app = FastAPI(title="tinyserve")
-    max_len = engine.engine.cfg.max_model_len
+    max_len = engine.cfg.max_model_len
 
     def params_for(req, prompt_len: int, max_tokens: int | None) -> SamplingParams:
         limit = max_len - prompt_len
@@ -136,7 +136,7 @@ def create_app(engine: AsyncEngine, model_name: str) -> FastAPI:
             if not prompt_ids:
                 return _error("empty prompt")
             params = params_for(req, len(prompt_ids), req.max_tokens)
-            if engine.engine.cfg.spec_method and not params.greedy:
+            if engine.cfg.spec_method and not params.greedy:
                 return _error("this server runs speculative decoding, which is greedy-only: set temperature=0")
             return await run(prompt_ids, params, req, "completion")
         except ValueError as e:
@@ -150,7 +150,7 @@ def create_app(engine: AsyncEngine, model_name: str) -> FastAPI:
             prompt_ids = engine.tokenizer.apply_chat_template(
                 [m.model_dump() for m in req.messages], tokenize=True, add_generation_prompt=True, **req.chat_template_kwargs)
             params = params_for(req, len(prompt_ids), req.max_completion_tokens or req.max_tokens)
-            if engine.engine.cfg.spec_method and not params.greedy:
+            if engine.cfg.spec_method and not params.greedy:
                 return _error("this server runs speculative decoding, which is greedy-only: set temperature=0")
             return await run(prompt_ids, params, req, "chat")
         except ValueError as e:
@@ -200,15 +200,27 @@ def main(argv=None) -> None:
     ap.add_argument("--enforce-eager", action="store_true")
     ap.add_argument("--spec-method", default=None, choices=[None, "dflash"])
     ap.add_argument("--spec-draft-model", default=None)
+    ap.add_argument("--engine-mode", default="process", choices=["process", "thread"],
+                    help="process: engine core in its own process (default); thread: same process")
     a = ap.parse_args(argv)
     cfg = EngineConfig(model=a.model, device=a.device, dtype=a.dtype, attn_backend=a.attn_backend, block_size=a.block_size,
                        max_num_seqs=a.max_num_seqs, max_model_len=a.max_model_len, max_num_batched_tokens=a.max_num_batched_tokens,
                        gpu_memory_utilization=a.gpu_memory_utilization, num_kv_blocks=a.num_kv_blocks,
                        enable_prefix_cache=not a.no_prefix_cache, enforce_eager=a.enforce_eager,
                        spec_method=a.spec_method, spec_draft_model=a.spec_draft_model)
-    engine = LLMEngine(cfg)
-    app = create_app(AsyncEngine(engine), a.served_model_name or a.model)
-    print(f"tinyserve: serving {a.model} on http://{a.host}:{a.port} (KV blocks: {engine.block_manager.num_blocks})", flush=True)
+    if a.engine_mode == "process":
+        from transformers import AutoTokenizer
+
+        from tinyserve.loader import resolve_model_path
+        from tinyserve.server.engine_process import ProcessAsyncEngine
+
+        aeng = ProcessAsyncEngine(cfg, AutoTokenizer.from_pretrained(resolve_model_path(a.model)))
+        n_blocks = aeng.num_kv_blocks
+    else:
+        engine = LLMEngine(cfg)
+        aeng, n_blocks = AsyncEngine(engine), engine.block_manager.num_blocks
+    app = create_app(aeng, a.served_model_name or a.model)
+    print(f"tinyserve: serving {a.model} on http://{a.host}:{a.port} (engine {a.engine_mode}, KV blocks: {n_blocks})", flush=True)
     uvicorn.run(app, host=a.host, port=a.port, log_level="warning")
 
 

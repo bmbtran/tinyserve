@@ -100,3 +100,16 @@ def closed_loop(engine, prompts, concurrency, params, first_alone=False):
         _, finished = engine.step()
         live -= len(finished)
     return [order[i] for i in range(len(prompts))], time.perf_counter() - t0
+
+
+def make_fullvocab_tiny_dir(path):
+    """Tiny random Qwen3 with the real 151,936 vocab + the real Qwen3 tokenizer files."""
+    import shutil
+
+    from huggingface_hub import snapshot_download
+
+    make_tiny_model(path, vocab_size=151936, eos_token_id=151645)
+    tok_dir = snapshot_download("Qwen/Qwen3-0.6B", allow_patterns=["tokenizer*", "vocab.json", "merges.txt"])
+    for f in ("tokenizer.json", "tokenizer_config.json", "vocab.json", "merges.txt"):
+        shutil.copy(f"{tok_dir}/{f}", path / f)
+    return path
