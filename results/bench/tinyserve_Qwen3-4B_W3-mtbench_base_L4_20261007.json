@@ -1,0 +1,94 @@
+{
+  "engine": "tinyserve",
+  "engine_version": "2485804",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-mtbench",
+  "config": {
+    "spec": null,
+    "max_tokens": 512,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 63.184,
+        "p90": 63.668,
+        "p99": 66.378,
+        "mean": 63.577
+      },
+      "itl_ms": {
+        "p50": 37.643,
+        "p90": 37.989,
+        "p99": 38.272,
+        "mean": 37.652
+      },
+      "tpot_ms": {
+        "p50": 37.629,
+        "p90": 37.701,
+        "p99": 37.775,
+        "mean": 37.608
+      },
+      "e2e_ms": {
+        "p50": 8214.25,
+        "p90": 19313.957,
+        "p99": 19366.086,
+        "mean": 9604.496
+      },
+      "output_tokens": 2035,
+      "tokens_per_chunk": 1.003,
+      "output_tok_s": 26.48,
+      "req_s": 0.104,
+      "wall_s": 76.84,
+      "tau": null,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 106.512,
+        "p90": 296.636,
+        "p99": 296.745,
+        "mean": 193.449
+      },
+      "itl_ms": {
+        "p50": 44.033,
+        "p90": 45.696,
+        "p99": 103.091,
+        "mean": 45.56
+      },
+      "tpot_ms": {
+        "p50": 45.915,
+        "p90": 46.497,
+        "p99": 48.397,
+        "mean": 45.544
+      },
+      "e2e_ms": {
+        "p50": 11473.599,
+        "p90": 23837.922,
+        "p99": 23839.1,
+        "mean": 12582.957
+      },
+      "output_tokens": 8746,
+      "tokens_per_chunk": 1.004,
+      "output_tok_s": 273.18,
+      "req_s": 1.0,
+      "wall_s": 32.02,
+      "tau": null,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 26.1,
+  "key": "W3-mtbench_base",
+  "started_utc": "2026-10-07T03:08:30Z"
+}

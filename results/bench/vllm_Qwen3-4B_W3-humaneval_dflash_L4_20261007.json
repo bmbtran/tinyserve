@@ -1,0 +1,94 @@
+{
+  "engine": "vllm",
+  "engine_version": "0.30.0",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-humaneval",
+  "config": {
+    "spec": "dflash",
+    "max_tokens": 512,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 91.613,
+        "p90": 93.773,
+        "p99": 94.012,
+        "mean": 88.524
+      },
+      "itl_ms": {
+        "p50": 42.289,
+        "p90": 42.818,
+        "p99": 43.603,
+        "mean": 42.317
+      },
+      "tpot_ms": {
+        "p50": 7.094,
+        "p90": 8.579,
+        "p99": 8.963,
+        "mean": 7.085
+      },
+      "e2e_ms": {
+        "p50": 2379.845,
+        "p90": 2868.598,
+        "p99": 3231.04,
+        "mean": 2448.836
+      },
+      "output_tokens": 2695,
+      "tokens_per_chunk": 5.949,
+      "output_tok_s": 137.56,
+      "req_s": 0.408,
+      "wall_s": 19.59,
+      "tau": 6.058,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 267.223,
+        "p90": 293.47,
+        "p99": 302.949,
+        "mean": 263.247
+      },
+      "itl_ms": {
+        "p50": 76.097,
+        "p90": 88.31,
+        "p99": 119.635,
+        "mean": 78.136
+      },
+      "tpot_ms": {
+        "p50": 13.225,
+        "p90": 15.637,
+        "p99": 23.025,
+        "mean": 13.08
+      },
+      "e2e_ms": {
+        "p50": 4660.319,
+        "p90": 6361.995,
+        "p99": 7414.233,
+        "mean": 4737.512
+      },
+      "output_tokens": 11144,
+      "tokens_per_chunk": 5.995,
+      "output_tok_s": 1046.65,
+      "req_s": 3.005,
+      "wall_s": 10.65,
+      "tau": 6.097,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 252.6,
+  "key": "W3-humaneval_dflash",
+  "started_utc": "2026-10-07T03:19:50Z"
+}

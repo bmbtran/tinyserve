@@ -1,0 +1,94 @@
+{
+  "engine": "tinyserve",
+  "engine_version": "2485804",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-humaneval",
+  "config": {
+    "spec": null,
+    "max_tokens": 512,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 65.032,
+        "p90": 75.884,
+        "p99": 91.127,
+        "mean": 69.258
+      },
+      "itl_ms": {
+        "p50": 37.812,
+        "p90": 38.205,
+        "p99": 42.075,
+        "mean": 37.848
+      },
+      "tpot_ms": {
+        "p50": 37.847,
+        "p90": 37.976,
+        "p99": 38.051,
+        "mean": 37.862
+      },
+      "e2e_ms": {
+        "p50": 13499.612,
+        "p90": 16720.605,
+        "p99": 18612.701,
+        "mean": 13114.026
+      },
+      "output_tokens": 2765,
+      "tokens_per_chunk": 1.003,
+      "output_tok_s": 26.36,
+      "req_s": 0.076,
+      "wall_s": 104.91,
+      "tau": null,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 120.566,
+        "p90": 451.24,
+        "p99": 451.365,
+        "mean": 267.865
+      },
+      "itl_ms": {
+        "p50": 45.002,
+        "p90": 46.487,
+        "p99": 105.723,
+        "mean": 46.225
+      },
+      "tpot_ms": {
+        "p50": 46.357,
+        "p90": 47.406,
+        "p99": 48.937,
+        "mean": 46.179
+      },
+      "e2e_ms": {
+        "p50": 16364.965,
+        "p90": 22495.629,
+        "p99": 24235.899,
+        "mean": 16340.967
+      },
+      "output_tokens": 11162,
+      "tokens_per_chunk": 1.003,
+      "output_tok_s": 284.38,
+      "req_s": 0.815,
+      "wall_s": 39.25,
+      "tau": null,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 26.1,
+  "key": "W3-humaneval_base",
+  "started_utc": "2026-10-07T03:08:30Z"
+}

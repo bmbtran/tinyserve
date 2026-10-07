@@ -1,0 +1,94 @@
+{
+  "engine": "vllm",
+  "engine_version": "0.30.0",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-mtbench",
+  "config": {
+    "spec": "dflash",
+    "max_tokens": 512,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 85.948,
+        "p90": 86.537,
+        "p99": 87.489,
+        "mean": 82.336
+      },
+      "itl_ms": {
+        "p50": 42.112,
+        "p90": 42.652,
+        "p99": 43.152,
+        "mean": 42.114
+      },
+      "tpot_ms": {
+        "p50": 20.74,
+        "p90": 22.882,
+        "p99": 24.416,
+        "mean": 19.709
+      },
+      "e2e_ms": {
+        "p50": 4410.913,
+        "p90": 9844.443,
+        "p99": 10947.841,
+        "mean": 4973.7
+      },
+      "output_tokens": 1947,
+      "tokens_per_chunk": 2.08,
+      "output_tok_s": 48.93,
+      "req_s": 0.201,
+      "wall_s": 39.79,
+      "tau": 2.1,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 231.654,
+        "p90": 252.797,
+        "p99": 280.178,
+        "mean": 232.248
+      },
+      "itl_ms": {
+        "p50": 73.557,
+        "p90": 78.999,
+        "p99": 91.26,
+        "mean": 72.669
+      },
+      "tpot_ms": {
+        "p50": 28.673,
+        "p90": 40.69,
+        "p99": 42.213,
+        "mean": 27.478
+      },
+      "e2e_ms": {
+        "p50": 6906.686,
+        "p90": 14525.602,
+        "p99": 17521.098,
+        "mean": 7468.5
+      },
+      "output_tokens": 8819,
+      "tokens_per_chunk": 2.743,
+      "output_tok_s": 460.74,
+      "req_s": 1.672,
+      "wall_s": 19.14,
+      "tau": 2.775,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 252.6,
+  "key": "W3-mtbench_dflash",
+  "started_utc": "2026-10-07T03:19:50Z"
+}

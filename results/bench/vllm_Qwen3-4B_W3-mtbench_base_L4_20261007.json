@@ -1,0 +1,94 @@
+{
+  "engine": "vllm",
+  "engine_version": "0.30.0",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-mtbench",
+  "config": {
+    "spec": null,
+    "max_tokens": 512,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 73.206,
+        "p90": 74.352,
+        "p99": 75.778,
+        "mean": 70.708
+      },
+      "itl_ms": {
+        "p50": 33.041,
+        "p90": 33.49,
+        "p99": 34.129,
+        "mean": 33.047
+      },
+      "tpot_ms": {
+        "p50": 33.026,
+        "p90": 33.07,
+        "p99": 33.095,
+        "mean": 33.038
+      },
+      "e2e_ms": {
+        "p50": 6877.691,
+        "p90": 14194.115,
+        "p99": 16978.422,
+        "mean": 7858.666
+      },
+      "output_tokens": 1893,
+      "tokens_per_chunk": 1.004,
+      "output_tok_s": 30.11,
+      "req_s": 0.127,
+      "wall_s": 62.87,
+      "tau": null,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 124.176,
+        "p90": 199.365,
+        "p99": 199.475,
+        "mean": 153.999
+      },
+      "itl_ms": {
+        "p50": 35.694,
+        "p90": 37.473,
+        "p99": 43.723,
+        "mean": 35.952
+      },
+      "tpot_ms": {
+        "p50": 35.893,
+        "p90": 36.369,
+        "p99": 36.473,
+        "mean": 35.815
+      },
+      "e2e_ms": {
+        "p50": 8995.912,
+        "p90": 18597.297,
+        "p99": 18632.43,
+        "mean": 9964.136
+      },
+      "output_tokens": 8776,
+      "tokens_per_chunk": 1.004,
+      "output_tok_s": 317.98,
+      "req_s": 1.159,
+      "wall_s": 27.6,
+      "tau": null,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 242.7,
+  "key": "W3-mtbench_base",
+  "started_utc": "2026-10-07T03:12:19Z"
+}

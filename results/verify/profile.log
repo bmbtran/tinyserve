@@ -1,0 +1,32 @@
+PROFILE offline engine c=64: 1843 output tok/s (server W1 c=64 is in results/bench)
+PROFILE PREFILL: 9 steps, mean ms per step {'schedule': 2.52, 'runner': 344.88, 'postprocess': 1.35}, share of wall 17.1%
+PROFILE DECODE: 510 steps, mean ms per step {'schedule': 0.1, 'runner': 29.4, 'postprocess': 0.2}, share of wall 82.7%
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                        cudaMemcpyAsync        86.73%     962.726ms        86.73%     962.726ms       2.188ms       0.000us         0.00%       0.000us       0.000us           440  
+                                        cudaGraphLaunch         8.59%      95.398ms         9.21%     102.225ms       2.556ms       1.505us         0.00%       1.505us       0.038us            40  
+                                           Buffer Flush         2.20%      24.450ms         2.21%      24.500ms       6.125ms       1.280us         0.00%       2.785us       0.696us             4  
+                                Activity Buffer Request         0.84%       9.363ms         0.84%       9.363ms       2.341ms       0.448us         0.00%       0.448us       0.112us             4  
+                                            aten::copy_         0.27%       2.998ms        87.35%     969.622ms       2.204ms     438.986us         0.04%     439.434us       0.999us           440  
+                                               aten::mm         0.26%       2.862ms         0.35%       3.900ms      97.509us      58.031ms         5.48%      58.031ms       1.451ms            40  
+                                    aten::empty_strided         0.14%       1.544ms         0.14%       1.544ms       6.431us       0.000us         0.00%       0.000us       0.000us           240  
+                                           aten::argmax         0.13%       1.411ms         0.21%       2.370ms      59.259us       3.749ms         0.35%       3.749ms      93.723us            40  
+                                  cudaStreamSynchronize         0.12%       1.377ms         0.12%       1.377ms       5.736us       0.000us         0.00%       0.000us       0.000us           240  
+                                         aten::_to_copy         0.11%       1.238ms        87.23%     968.316ms       4.035ms       0.000us         0.00%     145.077us       0.604us           240  
+                                            aten::empty         0.11%       1.226ms         0.11%       1.226ms       6.131us       0.000us         0.00%       0.000us       0.000us           200  
+                                               aten::to         0.09%       1.030ms        87.32%     969.346ms       4.039ms       0.000us         0.00%     145.077us       0.604us           240  
+                                         cuLaunchKernel         0.09%     991.531us         0.09%     991.531us      24.788us       0.000us         0.00%       0.000us       0.000us            40  
+                                            aten::slice         0.07%     832.213us         0.11%       1.230ms       5.125us       0.000us         0.00%       0.000us       0.000us           240  
+                                       aten::as_strided         0.05%     527.168us         0.05%     527.168us       1.647us       0.000us         0.00%       0.000us       0.000us           320  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 1.110s
+Self CUDA time total: 1.058s
+
+.
+PROFILE PASS offline_c64_output_tok_s=1842.6
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_profile_gpu.py::test_profile_w1
+1 passed in 81.75s (0:01:21)

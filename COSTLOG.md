@@ -15,3 +15,9 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | 2026-10-07 02:29 | `modal run modal_app.py::vllm_smoke` | L4 | 3.3 | 0.061 | 0.96 | M8a vLLM smoke: ERROR |
 | 2026-10-07 02:32 | `modal run modal_app.py::gpu_tests --suite m7` | L4 | 12.0 | 0.224 | 1.15 | M7 GPU tests: FAIL |
 | 2026-10-07 02:33 | `modal run modal_app.py::vllm_smoke` | L4 | 3.7 | 0.069 | 1.23 | M8a vLLM smoke: ok |
+| 2026-10-07 02:41 | `modal run modal_app.py::vllm_smoke --dflash` | L4 | 5.2 | 0.097 | 1.61 | M8a vLLM smoke: ok |
+| 2026-10-07 02:54 | `modal run modal_app.py::bench --engine tinyserve --suite core` | L4 | 18.8 | 0.351 | 2.48 | M8 bench tinyserve/core: ok |
+| 2026-10-07 02:57 | `modal run modal_app.py::bench --engine vllm --suite core` | L4 | 15.4 | 0.288 | 2.74 | M8 bench vllm/core: ok |
+| 2026-10-07 02:59 | `modal run modal_app.py::gpu_tests --suite profile` | L4 | 1.5 | 0.028 | 2.87 | PROFILE GPU tests: PASS |
+| 2026-10-07 03:14 | `modal run modal_app.py::bench --engine tinyserve --suite spec` | L4 | 18.3 | 0.341 | 3.98 | M8 bench tinyserve/spec: ok |
+| 2026-10-07 03:19 | `modal run modal_app.py::bench --engine vllm --suite spec` | L4 | 22.3 | 0.417 | 4.31 | M8 bench vllm/spec: ok |

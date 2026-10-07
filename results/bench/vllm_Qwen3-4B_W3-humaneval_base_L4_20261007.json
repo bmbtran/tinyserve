@@ -1,0 +1,94 @@
+{
+  "engine": "vllm",
+  "engine_version": "0.30.0",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-humaneval",
+  "config": {
+    "spec": null,
+    "max_tokens": 512,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 76.887,
+        "p90": 77.522,
+        "p99": 80.285,
+        "mean": 76.606
+      },
+      "itl_ms": {
+        "p50": 33.078,
+        "p90": 33.6,
+        "p99": 34.743,
+        "mean": 33.094
+      },
+      "tpot_ms": {
+        "p50": 33.097,
+        "p90": 33.117,
+        "p99": 33.143,
+        "mean": 33.093
+      },
+      "e2e_ms": {
+        "p50": 11826.686,
+        "p90": 12728.033,
+        "p99": 15153.693,
+        "mean": 11226.472
+      },
+      "output_tokens": 2703,
+      "tokens_per_chunk": 1.003,
+      "output_tok_s": 30.1,
+      "req_s": 0.089,
+      "wall_s": 89.81,
+      "tau": null,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 132.554,
+        "p90": 202.548,
+        "p99": 254.449,
+        "mean": 162.907
+      },
+      "itl_ms": {
+        "p50": 36.363,
+        "p90": 37.419,
+        "p99": 48.737,
+        "mean": 36.607
+      },
+      "tpot_ms": {
+        "p50": 36.636,
+        "p90": 36.823,
+        "p99": 37.347,
+        "mean": 36.587
+      },
+      "e2e_ms": {
+        "p50": 12653.001,
+        "p90": 17686.515,
+        "p99": 18850.112,
+        "mean": 12632.226
+      },
+      "output_tokens": 10935,
+      "tokens_per_chunk": 1.003,
+      "output_tok_s": 355.26,
+      "req_s": 1.04,
+      "wall_s": 30.78,
+      "tau": null,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 242.7,
+  "key": "W3-humaneval_base",
+  "started_utc": "2026-10-07T03:12:19Z"
+}
