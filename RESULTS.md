@@ -596,3 +596,24 @@ GPU: NVIDIA L4. tinyserve git `2485804`, vLLM `0.30.0`. Raw data: `results/bench
 | 64 | 40.69 | 12.62 | 3.23x |
 | 128 | 41.31 | 17.37 | 2.38x |
 ```
+
+## M9c (GPU) — 2026-10-07 03:33:08 UTC — git `f51b51d`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m9`
+Source file: `results/verify/m9.log`
+Note: Run at git of commit 'feat(spec): CUDA graphs for the DFlash verify step'. Server re-run: uv run modal run modal_app.py::bench --engine tinyserve --suite spec_dflash -> GSM8K c=1 104.3 tok/s (3.96x over non-spec 26.3).
+
+```text
+spec verify graphs captured for [1, 2, 4, 8, 16]
+M9c bs=1: eager 83.9 tok/s -> graph 112.1 tok/s (1.336x)
+M9c c=16: eager 874.7 tok/s -> graph 896.1 tok/s
+M9c tau bs1 5.653 -> 5.653; c16 6.023 -> 6.024; outputs exact 8/8, exact-or-near-tie 8/8
+M9c bs=1 DFlash(graph verify) 112.1 vs non-spec (graphs) 27.4 tok/s -> 4.10x
+.
+M9 PASS bs1_eager_tok_s=83.9 bs1_graph_tok_s=112.1 bs1_speedup_graph_vs_eager=1.336 c16_eager_tok_s=874.7 c16_graph_tok_s=896.1 tau_bs1_eager=5.653 tau_bs1_graph=5.653 tau_c16_eager=6.023 tau_c16_graph=6.024 outputs_bs1_exact=8/8 outputs_bs1_exact_or_near_tie=8/8 bs1_nonspec_graph_tok_s=27.4 bs1_dflash_graph_speedup_vs_nonspec=4.096
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m9_gpu.py::test_spec_verify_graphs
+1 passed in 191.16s (0:03:11)
+```

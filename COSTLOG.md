@@ -21,3 +21,5 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | 2026-10-07 02:59 | `modal run modal_app.py::gpu_tests --suite profile` | L4 | 1.5 | 0.028 | 2.87 | PROFILE GPU tests: PASS |
 | 2026-10-07 03:14 | `modal run modal_app.py::bench --engine tinyserve --suite spec` | L4 | 18.3 | 0.341 | 3.98 | M8 bench tinyserve/spec: ok |
 | 2026-10-07 03:19 | `modal run modal_app.py::bench --engine vllm --suite spec` | L4 | 22.3 | 0.417 | 4.31 | M8 bench vllm/spec: ok |
+| 2026-10-07 03:27 | `modal run modal_app.py::gpu_tests --suite m9` | L4 | 3.3 | 0.062 | 4.44 | M9 GPU tests: PASS |
+| 2026-10-07 03:32 | `modal run modal_app.py::bench --engine tinyserve --suite spec_dflash` | L4 | 4.8 | 0.089 | 4.44 | M8 bench tinyserve/spec_dflash: ok |
