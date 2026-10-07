@@ -1,0 +1,95 @@
+{
+  "engine": "tinyserve",
+  "engine_version": "878b62f",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-humaneval",
+  "config": {
+    "spec": "dflash",
+    "max_tokens": 512,
+    "spec_verify_cuda_graphs": true,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 66.211,
+        "p90": 67.193,
+        "p99": 67.577,
+        "mean": 65.892
+      },
+      "itl_ms": {
+        "p50": 53.497,
+        "p90": 54.279,
+        "p99": 56.109,
+        "mean": 53.564
+      },
+      "tpot_ms": {
+        "p50": 8.853,
+        "p90": 10.577,
+        "p99": 10.732,
+        "mean": 8.869
+      },
+      "e2e_ms": {
+        "p50": 2898.408,
+        "p90": 3952.743,
+        "p99": 4298.198,
+        "mean": 3146.9
+      },
+      "output_tokens": 2789,
+      "tokens_per_chunk": 5.972,
+      "output_tok_s": 110.78,
+      "req_s": 0.318,
+      "wall_s": 25.18,
+      "tau": 6.076,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 174.98,
+        "p90": 457.899,
+        "p99": 457.992,
+        "mean": 295.776
+      },
+      "itl_ms": {
+        "p50": 92.307,
+        "p90": 98.39,
+        "p99": 220.571,
+        "mean": 98.423
+      },
+      "tpot_ms": {
+        "p50": 16.611,
+        "p90": 19.92,
+        "p99": 29.567,
+        "mean": 16.4
+      },
+      "e2e_ms": {
+        "p50": 5614.983,
+        "p90": 8354.383,
+        "p99": 9442.241,
+        "mean": 5863.517
+      },
+      "output_tokens": 11058,
+      "tokens_per_chunk": 6.007,
+      "output_tok_s": 804.27,
+      "req_s": 2.327,
+      "wall_s": 13.75,
+      "tau": 6.121,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 27.1,
+  "key": "W3-humaneval_dflash_graphs",
+  "started_utc": "2026-10-07T03:32:16Z"
+}

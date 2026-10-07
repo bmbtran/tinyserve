@@ -1,0 +1,95 @@
+{
+  "engine": "tinyserve",
+  "engine_version": "878b62f",
+  "model": "Qwen/Qwen3-4B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W3-mtbench",
+  "config": {
+    "spec": "dflash",
+    "max_tokens": 512,
+    "spec_verify_cuda_graphs": true,
+    "num_requests": "min(32, 8*c)",
+    "temperature": 0,
+    "enable_thinking": false
+  },
+  "points": [
+    {
+      "concurrency": 1,
+      "num_requests": 8,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 65.155,
+        "p90": 68.136,
+        "p99": 68.732,
+        "mean": 65.403
+      },
+      "itl_ms": {
+        "p50": 53.428,
+        "p90": 54.244,
+        "p99": 56.242,
+        "mean": 53.5
+      },
+      "tpot_ms": {
+        "p50": 26.03,
+        "p90": 29.071,
+        "p99": 29.216,
+        "mean": 25.048
+      },
+      "e2e_ms": {
+        "p50": 5562.471,
+        "p90": 12853.078,
+        "p99": 14065.073,
+        "mean": 6499.694
+      },
+      "output_tokens": 2001,
+      "tokens_per_chunk": 2.063,
+      "output_tok_s": 38.48,
+      "req_s": 0.154,
+      "wall_s": 52.0,
+      "tau": 2.083,
+      "repeat": false
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 32,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 177.531,
+        "p90": 299.938,
+        "p99": 300.109,
+        "mean": 220.015
+      },
+      "itl_ms": {
+        "p50": 89.533,
+        "p90": 96.205,
+        "p99": 161.71,
+        "mean": 91.789
+      },
+      "tpot_ms": {
+        "p50": 36.778,
+        "p90": 48.384,
+        "p99": 53.219,
+        "mean": 33.732
+      },
+      "e2e_ms": {
+        "p50": 9360.281,
+        "p90": 16189.926,
+        "p99": 22364.951,
+        "mean": 9485.33
+      },
+      "output_tokens": 9066,
+      "tokens_per_chunk": 2.784,
+      "output_tok_s": 373.62,
+      "req_s": 1.319,
+      "wall_s": 24.27,
+      "tau": 2.807,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 27.1,
+  "key": "W3-mtbench_dflash_graphs",
+  "started_utc": "2026-10-07T03:32:16Z"
+}

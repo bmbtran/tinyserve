@@ -1,0 +1,25 @@
+{
+  "metrics": {
+    "bs1_eager_tok_s": 83.9,
+    "bs1_graph_tok_s": 112.1,
+    "bs1_speedup_graph_vs_eager": 1.336,
+    "c16_eager_tok_s": 874.7,
+    "c16_graph_tok_s": 896.1,
+    "tau_bs1_eager": 5.653,
+    "tau_bs1_graph": 5.653,
+    "tau_c16_eager": 6.023,
+    "tau_c16_graph": 6.024,
+    "outputs_bs1_exact": "8/8",
+    "outputs_bs1_exact_or_near_tie": "8/8",
+    "bs1_nonspec_graph_tok_s": 27.4,
+    "bs1_dflash_graph_speedup_vs_nonspec": 4.096
+  },
+  "tests": {
+    "test_spec_verify_graphs": "passed"
+  },
+  "status": "PASS",
+  "finished_utc": "2026-10-07 03:26:51",
+  "git_sha": "3d7a246",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 0
+}

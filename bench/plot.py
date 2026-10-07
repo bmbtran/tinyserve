@@ -148,18 +148,22 @@ def main() -> None:
     fig, ax = plt.subplots(figsize=(7, 4.2))
     drawn = False
     spec_rows = []
-    for eng in ("tinyserve", "vllm"):
-        base, fl = bench.get(f"{eng}/W3-gsm8k_base"), bench.get(f"{eng}/W3-gsm8k_dflash")
+    variants = [("tinyserve", "W3-gsm8k_dflash_graphs", "tinyserve DFlash (graph verify, M9c) ÷ tinyserve", "-", (6, -16)),
+                ("tinyserve", "W3-gsm8k_dflash", "tinyserve DFlash (eager verify, M7) ÷ tinyserve", "--", (6, 6)),
+                ("vllm", "W3-gsm8k_dflash", "vLLM DFlash ÷ vLLM", "-", (6, 6))]
+    for eng, key, label, ls, off in variants:
+        base, fl = bench.get(f"{eng}/W3-gsm8k_base"), bench.get(f"{eng}/{key}")
         if not (base and fl):
             continue
         b, f = {p["concurrency"]: p for p in pts(base)}, {p["concurrency"]: p for p in pts(fl)}
         cs = sorted(set(b) & set(f))
         sp = [f[c]["output_tok_s"] / b[c]["output_tok_s"] for c in cs]
-        ax.plot(cs, sp, color=COLORS[eng], lw=2, marker="o", ms=8, mec=SURFACE, mew=2, label=f"{LABEL[eng]} DFlash ÷ {LABEL[eng]}")
-        ax.annotate(f"{sp[0]:.2f}x", (cs[0], sp[0]), xytext=(6, 6), textcoords="offset points", color=INK2, fontsize=9)
+        ax.plot(cs, sp, color=COLORS[eng], lw=2, ls=ls, marker="o", ms=8, mec=SURFACE, mew=2, label=label)
+        ax.annotate(f"{sp[0]:.2f}x", (cs[0], sp[0]), xytext=off, textcoords="offset points", color=INK2, fontsize=9)
         drawn = True
-        for c, s in zip(cs, sp):
-            spec_rows.append(f"| {c} | {eng} | {b[c]['output_tok_s']:,.1f} | {f[c]['output_tok_s']:,.1f} | {s:.2f}x | {f[c].get('tau')} |")
+        name = label.split(" ÷")[0]
+        for c, x in zip(cs, sp):
+            spec_rows.append(f"| {c} | {name} | {b[c]['output_tok_s']:,.1f} | {f[c]['output_tok_s']:,.1f} | {x:.2f}x | {f[c].get('tau')} |")
     if drawn:
         ax.axhline(1, color=INK2, lw=1, ls="--")
         ax.set_xscale("log", base=2)
@@ -168,10 +172,11 @@ def main() -> None:
         ax.set_ylabel("speedup in output tokens / s (x)")
         ax.set_title("DFlash speedup vs concurrency", pad=22)
         subtitle(ax, "W3 GSM8K: Qwen3-4B bf16 + z-lab/Qwen3-4B-DFlash-b16, greedy, max 512 tokens")
-        ax.legend(loc="best")
+        ax.set_ylim(0, 5)
+        ax.legend(loc="lower right", fontsize=9)
         fig.tight_layout()
         fig.savefig(CHARTS / "spec_speedup_vs_concurrency.png", dpi=150)
-        lines += ["## W3 GSM8K: DFlash speedup", "", "| c | engine | base tok/s | DFlash tok/s | speedup | tau |", "|---|---|---|---|---|---|", *spec_rows, ""]
+        lines += ["## W3 GSM8K: DFlash speedup", "", "| c | config | base tok/s | DFlash tok/s | speedup | tau |", "|---|---|---|---|---|---|", *spec_rows, ""]
     plt.close(fig)
 
     # 5: tau vs paper

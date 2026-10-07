@@ -37,18 +37,23 @@ GPU: NVIDIA L4. tinyserve git `2485804`, vLLM `0.30.0`. Raw data: `results/bench
 
 ## W3 GSM8K: DFlash speedup
 
-| c | engine | base tok/s | DFlash tok/s | speedup | tau |
+| c | config | base tok/s | DFlash tok/s | speedup | tau |
 |---|---|---|---|---|---|
-| 1 | tinyserve | 26.3 | 76.5 | 2.90x | 5.653 |
-| 2 | tinyserve | 48.5 | 149.1 | 3.08x | 5.905 |
-| 4 | tinyserve | 93.6 | 297.0 | 3.17x | 6.19 |
-| 8 | tinyserve | 165.7 | 526.7 | 3.18x | 6.129 |
-| 16 | tinyserve | 270.6 | 818.8 | 3.03x | 6.118 |
-| 1 | vllm | 30.2 | 129.1 | 4.27x | 5.639 |
-| 2 | vllm | 58.0 | 233.6 | 4.03x | 5.873 |
-| 4 | vllm | 111.0 | 455.7 | 4.11x | 5.994 |
-| 8 | vllm | 206.6 | 784.0 | 3.79x | 6.028 |
-| 16 | vllm | 343.2 | 1,042.5 | 3.04x | 6.048 |
+| 1 | tinyserve DFlash (graph verify, M9c) | 26.3 | 104.3 | 3.96x | 5.653 |
+| 2 | tinyserve DFlash (graph verify, M9c) | 48.5 | 187.9 | 3.88x | 5.905 |
+| 4 | tinyserve DFlash (graph verify, M9c) | 93.6 | 354.9 | 3.79x | 6.19 |
+| 8 | tinyserve DFlash (graph verify, M9c) | 165.7 | 586.4 | 3.54x | 6.161 |
+| 16 | tinyserve DFlash (graph verify, M9c) | 270.6 | 848.0 | 3.13x | 6.015 |
+| 1 | tinyserve DFlash (eager verify, M7) | 26.3 | 76.5 | 2.90x | 5.653 |
+| 2 | tinyserve DFlash (eager verify, M7) | 48.5 | 149.1 | 3.08x | 5.905 |
+| 4 | tinyserve DFlash (eager verify, M7) | 93.6 | 297.0 | 3.17x | 6.19 |
+| 8 | tinyserve DFlash (eager verify, M7) | 165.7 | 526.7 | 3.18x | 6.129 |
+| 16 | tinyserve DFlash (eager verify, M7) | 270.6 | 818.8 | 3.03x | 6.118 |
+| 1 | vLLM DFlash | 30.2 | 129.1 | 4.27x | 5.639 |
+| 2 | vLLM DFlash | 58.0 | 233.6 | 4.03x | 5.873 |
+| 4 | vLLM DFlash | 111.0 | 455.7 | 4.11x | 5.994 |
+| 8 | vLLM DFlash | 206.6 | 784.0 | 3.79x | 6.028 |
+| 16 | vLLM DFlash | 343.2 | 1,042.5 | 3.04x | 6.048 |
 
 ## DFlash tau per dataset
 
