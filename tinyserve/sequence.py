@@ -51,6 +51,10 @@ class Sequence:
         self.spec_steps = 0
         self.spec_accepted = 0
 
+        # Debug/testing: top-1 minus top-2 logit for each emitted token (only
+        # filled when ModelRunner.record_gaps is on; used by the near-tie rule).
+        self.logit_gaps: list[float] = []
+
         # Free-form slot for the server (e.g. a request handle); the engine never reads it.
         self.user_data: Any = None
 
