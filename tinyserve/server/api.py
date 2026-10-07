@@ -22,24 +22,33 @@ from tinyserve.server.protocol import ChatCompletionRequest, CompletionRequest
 
 
 class IncrementalDetokenizer:
-    """Decode the whole output each time and emit only the new suffix.
-    A trailing U+FFFD means the last token ended mid UTF-8 character, so it is
+    """Emit only the newly decoded text, decoding a short window of recent
+    tokens instead of the whole output every time (vLLM's approach; decoding
+    everything each chunk is O(n^2) and holds the GIL the engine thread needs).
+
+    prefix_offset..read_offset is text already emitted; we decode the window
+    twice (with and without the new tokens) and emit the difference. A
+    trailing U+FFFD means the last token ended mid UTF-8 character, so it is
     held back until the next token completes it (or the request ends)."""
 
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
         self.ids: list[int] = []
-        self.sent = ""
+        self.prefix_offset = 0
+        self.read_offset = 0
+
+    def _decode(self, ids):
+        return self.tokenizer.decode(ids, skip_special_tokens=True)
 
     def add(self, new_ids: list[int], final: bool) -> str:
         self.ids.extend(new_ids)
-        text = self.tokenizer.decode(self.ids, skip_special_tokens=True)
-        if not final:
-            text = text.rstrip("�")
-        if len(text) <= len(self.sent):
+        prefix_text = self._decode(self.ids[self.prefix_offset : self.read_offset])
+        new_text = self._decode(self.ids[self.prefix_offset :])
+        if len(new_text) <= len(prefix_text) or (new_text.endswith("�") and not final):
             return ""
-        delta = text[len(self.sent) :]
-        self.sent = text
+        delta = new_text[len(prefix_text) :]
+        # The tokens of this chunk become the left context of the next one.
+        self.prefix_offset, self.read_offset = self.read_offset, len(self.ids)
         return delta
 
 

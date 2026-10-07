@@ -118,6 +118,7 @@ class LLMEngine:
             "prefix_hit_tokens": bm.stats["prefix_hit_tokens"],
             "spec_tau": (c["spec_accepted"] + c["spec_steps"]) / c["spec_steps"] if c["spec_steps"] else None,
             "spec_steps": c["spec_steps"],
+            "spec_accepted": c["spec_accepted"],
             "num_preemptions": self.scheduler.num_preemptions,
             "prompt_tokens": c["prompt_tokens"],
             "generation_tokens": c["generation_tokens"],

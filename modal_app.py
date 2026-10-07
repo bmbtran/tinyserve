@@ -282,3 +282,234 @@ def gpu_tests(suite: str, pytest_args: str = ""):
         print(f"\nwrote results/verify/{suite}.json and .log; status={status}")
     finally:
         _costlog(f"modal run modal_app.py::gpu_tests --suite {suite}", time.time() - t, f"{suite.upper()} GPU tests: {status}")
+
+
+# ---------------------------------------------------------------------------
+# M8: benchmarks (server + bench/client.py in ONE container per engine)
+# ---------------------------------------------------------------------------
+VLLM_VERSION = "0.30.0"
+vllm_image = (
+    modal.Image.debian_slim(python_version="3.12")
+    .uv_pip_install(f"vllm=={VLLM_VERSION}", "httpx")
+    .env({**HF_ENV, "HF_HUB_OFFLINE": "1"})
+    .add_local_dir(ROOT / "bench", "/root/bench", ignore=["**/__pycache__"])
+)
+
+M06, M4B = "Qwen/Qwen3-0.6B", "Qwen/Qwen3-4B"
+DFLASH = "z-lab/Qwen3-4B-DFlash-b16"
+PORT = 8000
+W1_CONC = [1, 4, 16, 64, 128]
+W3_SWEEP = [1, 2, 4, 8, 16]
+
+
+def _server_cmd(engine: str, model: str, prefix_cache: bool = True, dflash: bool = False) -> list[str]:
+    if engine == "tinyserve":
+        cmd = [sys.executable, "-m", "tinyserve.server.api", "--model", model, "--port", str(PORT),
+               "--max-model-len", "4096", "--gpu-memory-utilization", "0.85", "--max-num-seqs", "128"]
+        if not prefix_cache:
+            cmd.append("--no-prefix-cache")
+        if dflash:
+            cmd += ["--spec-method", "dflash", "--spec-draft-model", DFLASH]
+        return cmd
+    cmd = ["vllm", "serve", model, "--port", str(PORT), "--max-model-len", "4096", "--gpu-memory-utilization", "0.85",
+           "--max-num-seqs", "128", "--dtype", "bfloat16", "--served-model-name", model]
+    if not prefix_cache:
+        cmd.append("--no-enable-prefix-caching")
+    if dflash:
+        cmd += ["--speculative-config", json.dumps({"method": "dflash", "model": DFLASH, "num_speculative_tokens": 15})]
+    return cmd
+
+
+def _spec_counters(engine: str):
+    """(accepted draft tokens, verify steps) so far, from the server's /metrics."""
+    import httpx
+
+    try:
+        r = httpx.get(f"http://127.0.0.1:{PORT}/metrics", timeout=5)
+    except httpx.HTTPError:
+        return None
+    if engine == "tinyserve":
+        m = r.json()
+        return float(m.get("spec_accepted") or 0), float(m.get("spec_steps") or 0)
+    acc = drafts = None
+    for line in r.text.splitlines():
+        if line.startswith("vllm:spec_decode_num_accepted_tokens_total"):
+            acc = (acc or 0) + float(line.rsplit(" ", 1)[1])
+        elif line.startswith("vllm:spec_decode_num_drafts_total"):
+            drafts = (drafts or 0) + float(line.rsplit(" ", 1)[1])
+    return None if acc is None or drafts is None else (acc, drafts)
+
+
+def _run_points(engine, model, endpoint, reqs_for, concs, dflash=False, repeat=()):
+    """One benchmark point per concurrency (+ repeats). reqs_for(c) -> request list."""
+    import asyncio
+
+    from bench.client import run_load, summarize
+
+    points = []
+    for conc, is_rep in [(c, False) for c in concs] + [(c, True) for c in repeat]:
+        before = _spec_counters(engine) if dflash else None
+        s = summarize(asyncio.run(run_load(f"http://127.0.0.1:{PORT}", reqs_for(conc), conc, model, endpoint)))
+        after = _spec_counters(engine) if dflash else None
+        tau = None
+        if before and after and after[1] > before[1]:
+            tau = 1 + (after[0] - before[0]) / (after[1] - before[1])
+        s["tau"] = round(tau, 3) if tau else None
+        s["repeat"] = is_rep
+        print(f"  [{engine}{' dflash' if dflash else ''}] {endpoint} c={conc}{' (repeat)' if is_rep else ''}: "
+              f"{s['output_tok_s']} tok/s TTFT p50 {s['ttft_ms']['p50']} ms TPOT p50 {s['tpot_ms']['p50']} ms "
+              f"errors {s['errors']} tau {s['tau']}", flush=True)
+        points.append(s)
+    return points
+
+
+def _with_server(cmd, fn):
+    """Start a server subprocess, wait for /health, run fn(), stop it."""
+    from bench.client import wait_for_health
+
+    print("$ " + " ".join(cmd), flush=True)
+    proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+    try:
+        waited = wait_for_health(f"http://127.0.0.1:{PORT}", 1200, proc)
+        print(f"  healthy after {waited:.0f}s", flush=True)
+        return fn(), waited
+    finally:
+        proc.terminate()
+        try:
+            proc.wait(timeout=60)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        time.sleep(5)  # let the GPU memory go
+
+
+def _bench_suite(engine: str, suite: str, version: str) -> dict:
+    import asyncio
+
+    from bench.client import run_load
+    from bench.workloads import SPEC_DATASETS, load_chat, w1_random, w2_shared_prefix
+
+    gpu = subprocess.run(["nvidia-smi", "--query-gpu=name,driver_version,memory.total", "--format=csv,noheader"],
+                         capture_output=True, text=True).stdout.strip().split(",")
+    out = {}
+
+    def record(key, model, workload, config, points, startup_s):
+        out[key] = {"engine": engine, "engine_version": version, "model": model, "gpu": gpu[0].strip(),
+                    "driver": gpu[1].strip() if len(gpu) > 1 else None, "workload": workload, "config": config,
+                    "points": points, "server_startup_s": round(startup_s, 1), "key": key,
+                    "started_utc": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+
+    def warmup(model, endpoint, reqs):
+        asyncio.run(run_load(f"http://127.0.0.1:{PORT}", reqs[:8], 8, model, endpoint))
+
+    if suite == "core":
+        w1 = [{**r, "ignore_eos": True} for r in w1_random()]
+        w2 = [{**r, "ignore_eos": True} for r in w2_shared_prefix()]
+        warm = [{**r, "ignore_eos": True, "max_tokens": 16} for r in w1_random(n=8, seed=99)]
+
+        def core_on():
+            warmup(M06, "completions", warm)
+            p1 = _run_points(engine, M06, "completions", lambda c: w1, W1_CONC, repeat=(16,))
+            p2 = _run_points(engine, M06, "completions", lambda c: w2, [16])
+            return p1, p2
+
+        (p1, p2), st = _with_server(_server_cmd(engine, M06), core_on)
+        record("W1", M06, "W1", {"prefix_cache": True, "num_requests": 256, "input_len": "U[256,768]", "output_len": 256}, p1, st)
+        w2cfg = {"groups": 8, "per_group": 16, "prefix": 2048, "suffix": "U[64,128]", "output_len": 128}
+        record("W2_cacheon", M06, "W2", {"prefix_cache": True, **w2cfg}, p2, st)
+        if engine == "tinyserve":  # PLAN.md 7: cache OFF only for tinyserve
+            def core_off():
+                warmup(M06, "completions", warm)
+                return _run_points(engine, M06, "completions", lambda c: w2, [16])
+
+            p3, st = _with_server(_server_cmd(engine, M06, prefix_cache=False), core_off)
+            record("W2_cacheoff", M06, "W2", {"prefix_cache": False, **w2cfg}, p3, st)
+    elif suite == "spec":
+        data = {d: [{"messages": r["messages"], "max_tokens": 512} for r in load_chat(d)] for d in SPEC_DATASETS}
+
+        def n_for(c):  # budget: fewer requests at low concurrency
+            return min(32, 8 * c)
+
+        for dflash in (False, True):
+            def spec_run():
+                warmup(M4B, "chat", [{**r, "max_tokens": 32} for r in data["gsm8k"]])
+                pts = {"gsm8k": _run_points(engine, M4B, "chat", lambda c: data["gsm8k"][: n_for(c)], W3_SWEEP, dflash, repeat=(1,))}
+                for d in ("humaneval", "mtbench"):
+                    pts[d] = _run_points(engine, M4B, "chat", lambda c, d=d: data[d][: n_for(c)], [1, 16], dflash)
+                return pts
+
+            pts, st = _with_server(_server_cmd(engine, M4B, dflash=dflash), spec_run)
+            tag = "dflash" if dflash else "base"
+            for d, p in pts.items():
+                record(f"W3-{d}_{tag}", M4B, f"W3-{d}", {"spec": "dflash" if dflash else None, "max_tokens": 512,
+                                                      "num_requests": "min(32, 8*c)", "temperature": 0, "enable_thinking": False}, p, st)
+    else:
+        raise ValueError(suite)
+    return out
+
+
+@app.function(image=engine_image, timeout=2400, **GPU_KW)
+def bench_tinyserve(suite: str, git_sha: str) -> dict:
+    os.chdir("/root")
+    return _bench_suite("tinyserve", suite, git_sha)
+
+
+@app.function(image=vllm_image, timeout=2400, **GPU_KW)
+def bench_vllm(suite: str) -> dict:
+    os.chdir("/root")
+    sys.path.insert(0, "/root")
+    import vllm
+
+    return _bench_suite("vllm", suite, vllm.__version__)
+
+
+@app.function(image=vllm_image, timeout=900, **GPU_KW)
+def vllm_smoke_remote(dflash: bool = False) -> str:
+    """M8a: start `vllm serve`, send one request (<= ~5 min)."""
+    import httpx
+
+    os.chdir("/root")
+    sys.path.insert(0, "/root")
+    import vllm
+
+    model = M4B if dflash else M06
+
+    def one():
+        r = httpx.post(f"http://127.0.0.1:{PORT}/v1/chat/completions", timeout=300, json={
+            "model": model, "messages": [{"role": "user", "content": "What is 2+2? Answer briefly."}], "max_tokens": 32,
+            "temperature": 0, "chat_template_kwargs": {"enable_thinking": False}})
+        return r.status_code, r.json()["choices"][0]["message"]["content"], _spec_counters("vllm")
+
+    (code, text, spec), waited = _with_server(_server_cmd("vllm", model, dflash=dflash), one)
+    msg = f"vllm {vllm.__version__} model={model} dflash={dflash} startup={waited:.0f}s status={code} text={text!r} spec_counters={spec}"
+    print(msg)
+    return msg
+
+
+@app.local_entrypoint()
+def bench(engine: str, suite: str):
+    _cost_guard()
+    t = time.time()
+    status = "ERROR"
+    try:
+        out = bench_tinyserve.remote(suite, _git_sha()) if engine == "tinyserve" else bench_vllm.remote(suite)
+        for key, res in out.items():
+            gpu = res["gpu"].replace("NVIDIA ", "").replace(" ", "")
+            path = ROOT / "results" / "bench" / f"{engine}_{res['model'].split('/')[-1]}_{key}_{gpu}_{res['started_utc'][:10].replace('-', '')}.json"
+            path.write_text(json.dumps(res, indent=2) + "\n", encoding="utf-8")
+            print(f"wrote {path.relative_to(ROOT)}")
+        status = "ok"
+    finally:
+        _costlog(f"modal run modal_app.py::bench --engine {engine} --suite {suite}", time.time() - t, f"M8 bench {engine}/{suite}: {status}")
+
+
+@app.local_entrypoint()
+def vllm_smoke(dflash: bool = False):
+    _cost_guard()
+    t = time.time()
+    status = "ERROR"
+    try:
+        msg = vllm_smoke_remote.remote(dflash)
+        (ROOT / "results" / "bench" / f"vllm_smoke{'_dflash' if dflash else ''}.log").write_text(msg + "\n", encoding="utf-8")
+        status = "ok"
+    finally:
+        _costlog(f"modal run modal_app.py::vllm_smoke{' --dflash' if dflash else ''}", time.time() - t, f"M8a vLLM smoke: {status}")
