@@ -336,3 +336,42 @@ PASSED tests/gpu/test_m5_gpu.py::test_a_graph_vs_eager_outputs
 PASSED tests/gpu/test_m5_gpu.py::test_b_c_itl
 2 passed in 51.88s
 ```
+
+## M6 (CPU) — 2026-10-07 02:09:50 UTC — git `3604694`
+
+Command: `uv run pytest tests/cpu/test_server.py -q`  (exit code 0)
+
+```text
+.........                                                                [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\tranb\projects\tinyserve\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+9 passed, 1 warning in 18.42s
+```
+
+## M6 (GPU) — 2026-10-07 02:09:51 UTC — git `3604694`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m6`
+Source file: `results/verify/m6.log`
+Note: PASS. Includes the official openai client streaming transcript (DoD item).
+
+```text
+tinyserve: serving Qwen/Qwen3-0.6B on http://127.0.0.1:8011 (KV blocks: 613)
+server healthy after 18s
+  openai: chat (stream) -> 'Three primary colors are **red, blue, and yellow**.'
+  openai: completions (stream) -> ' Paris. The capital of France is also the capital of the'
+  openai: chat (non-stream) -> 'Three primary colors are **red, blue, and yellow**.' usage=CompletionUsage(completion_tokens=14, prompt_tokens=17, total_tokens=31, completion_tokens_details=None, prompt_tokens_details=None)
+  openai: models -> ['Qwen/Qwen3-0.6B']
+.M6 c=32 x 64 req: errors=0 TTFT p50=459.272ms p99=553.875ms ITL p50=19.047ms p99=36.748ms output_tok_s=1387.23
+.
+M6 PASS errors=0
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m6_gpu.py::test_openai_client_streaming
+PASSED tests/gpu/test_m6_gpu.py::test_concurrency_32_x_64
+2 passed in 33.77s
+```

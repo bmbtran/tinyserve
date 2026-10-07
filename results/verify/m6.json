@@ -1,0 +1,55 @@
+{
+  "metrics": {
+    "openai_transcript": [
+      "chat (stream) -> 'Three primary colors are **red, blue, and yellow**.'",
+      "completions (stream) -> ' Paris. The capital of France is also the capital of the'",
+      "chat (non-stream) -> 'Three primary colors are **red, blue, and yellow**.' usage=CompletionUsage(completion_tokens=14, prompt_tokens=17, total_tokens=31, completion_tokens_details=None, prompt_tokens_details=None)",
+      "models -> ['Qwen/Qwen3-0.6B']"
+    ],
+    "load": {
+      "concurrency": 32,
+      "num_requests": 64,
+      "errors": 0,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 459.272,
+        "p90": 547.126,
+        "p99": 553.875,
+        "mean": 463.686
+      },
+      "itl_ms": {
+        "p50": 19.047,
+        "p90": 21.688,
+        "p99": 36.748,
+        "mean": 21.129
+      },
+      "tpot_ms": {
+        "p50": 19.222,
+        "p90": 20.341,
+        "p99": 21.616,
+        "mean": 19.443
+      },
+      "e2e_ms": {
+        "p50": 2917.815,
+        "p90": 2987.011,
+        "p99": 3040.797,
+        "mean": 2933.007
+      },
+      "output_tokens": 8192,
+      "tokens_per_chunk": 1.144,
+      "output_tok_s": 1387.23,
+      "req_s": 10.838,
+      "wall_s": 5.91
+    },
+    "errors": 0
+  },
+  "tests": {
+    "test_openai_client_streaming": "passed",
+    "test_concurrency_32_x_64": "passed"
+  },
+  "status": "PASS",
+  "finished_utc": "2026-10-07 02:09:05",
+  "git_sha": "3604694",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 0
+}
