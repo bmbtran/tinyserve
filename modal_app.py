@@ -371,18 +371,36 @@ def _with_server(cmd, fn):
     # vLLM 0.30's FlashInfer sampler JIT-compiles with nvcc, which the slim image
     # lacks (M8a smoke failure); use vLLM's PyTorch sampler instead.
     env = {**os.environ, "VLLM_USE_FLASHINFER_SAMPLER": "0"}
-    proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr, env=env)
+    proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr, env=env, start_new_session=True)
     try:
         waited = wait_for_health(f"http://127.0.0.1:{PORT}", 1200, proc)
         print(f"  healthy after {waited:.0f}s", flush=True)
         return fn(), waited
     finally:
+        import signal
+
         proc.terminate()
         try:
             proc.wait(timeout=60)
         except subprocess.TimeoutExpired:
             proc.kill()
-        time.sleep(5)  # let the GPU memory go
+        try:  # also any child left behind (tinyserve's engine process, vLLM's EngineCore)
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        _wait_gpu_free()
+
+
+def _wait_gpu_free(timeout_s: float = 120) -> None:
+    """Block until no process holds GPU memory, so the next server sees the whole card."""
+    t0 = time.time()
+    while time.time() - t0 < timeout_s:
+        out = subprocess.run(["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"],
+                             capture_output=True, text=True).stdout.strip()
+        if not out:
+            return
+        time.sleep(2)
+    print(f"  WARNING: GPU still in use after {timeout_s:.0f}s: {out}", flush=True)
 
 
 def _bench_suite(engine: str, suite: str, version: str) -> dict:

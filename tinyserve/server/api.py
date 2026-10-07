@@ -221,7 +221,11 @@ def main(argv=None) -> None:
         aeng, n_blocks = AsyncEngine(engine), engine.block_manager.num_blocks
     app = create_app(aeng, a.served_model_name or a.model)
     print(f"tinyserve: serving {a.model} on http://{a.host}:{a.port} (engine {a.engine_mode}, KV blocks: {n_blocks})", flush=True)
-    uvicorn.run(app, host=a.host, port=a.port, log_level="warning")
+    try:
+        uvicorn.run(app, host=a.host, port=a.port, log_level="warning")
+    finally:
+        if hasattr(aeng, "shutdown"):
+            aeng.shutdown()  # the engine process holds the GPU memory; never leave it behind
 
 
 if __name__ == "__main__":

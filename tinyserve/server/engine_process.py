@@ -17,6 +17,7 @@ from __future__ import annotations
 import asyncio
 import itertools
 import multiprocessing as mp
+import os
 import queue
 import threading
 import traceback
@@ -27,8 +28,21 @@ from tinyserve.config import EngineConfig
 from tinyserve.sampling import SamplingParams
 
 
-def _engine_main(cfg: EngineConfig, in_q, out_q) -> None:
+def _exit_with_parent(parent_pid: int) -> None:
+    """If the HTTP process dies without sending "stop" (SIGKILL, crash), exit too, freeing the GPU."""
+    import os
+    import time
+
+    while True:
+        time.sleep(1)
+        if os.getppid() != parent_pid:
+            os._exit(0)
+
+
+def _engine_main(cfg: EngineConfig, in_q, out_q, parent_pid: int | None = None) -> None:
     """Entry point of the engine process."""
+    if parent_pid is not None:
+        threading.Thread(target=_exit_with_parent, args=(parent_pid,), daemon=True).start()
     try:
         from tinyserve.engine import LLMEngine
 
@@ -109,7 +123,7 @@ class ProcessAsyncEngine:
         self.tokenizer = tokenizer
         ctx = mp.get_context("spawn")
         self._in, self._out = ctx.Queue(), ctx.Queue()
-        self._proc = ctx.Process(target=_engine_main, args=(cfg, self._in, self._out), name="tinyserve-engine-core", daemon=True)
+        self._proc = ctx.Process(target=_engine_main, args=(cfg, self._in, self._out, os.getpid()), name="tinyserve-engine-core", daemon=True)
         self._proc.start()
         msg = self._out.get(timeout=startup_timeout_s)
         if msg[0] != "ready":
@@ -130,6 +144,9 @@ class ProcessAsyncEngine:
         self._proc.join(timeout=10)
         if self._proc.is_alive():
             self._proc.terminate()
+            self._proc.join(timeout=10)
+        if self._proc.is_alive():
+            self._proc.kill()
 
     def _read_loop(self) -> None:
         while True:
