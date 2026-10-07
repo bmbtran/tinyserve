@@ -71,6 +71,32 @@ def test_a_flash_vs_torch_backend(flash_engine, report):
     top1 = (lf.argmax(-1) == lt.argmax(-1)).float().mean().item()
     report["a_max_abs_diff"] = round(diff, 4)
     report["a_top1_agree"] = round(top1, 4)
+
+    # Diagnostic (does not change the threshold): how far is EACH bf16 backend
+    # from a float32 run of the same weights? If both are equally far, the
+    # flash/torch gap is bf16 noise, not a backend bug.
+    import copy
+
+    caches = [(l.k_cache, l.v_cache) for l in flash_engine.runner.layers]
+    for l in flash_engine.runner.layers:
+        l.k_cache = l.v_cache = torch.tensor([])
+    m32 = copy.deepcopy(flash_engine.runner.model).float()
+    for (kc, vc), l in zip(caches, flash_engine.runner.layers):
+        l.k_cache, l.v_cache = kc, vc
+    for l in m32.attention_layers():
+        l.backend = backend_torch
+    l32 = full_prefill_logits(m32, seqs)
+    del m32
+    torch.cuda.empty_cache()
+    e_flash = (lf - l32).abs().max().item()
+    e_torch = (lt - l32).abs().max().item()
+    report["a_diag_flash_vs_fp32"] = round(e_flash, 4)
+    report["a_diag_torch_bf16_vs_fp32"] = round(e_torch, 4)
+    report["a_diag_flash_top1_vs_fp32"] = round((lf.argmax(-1) == l32.argmax(-1)).float().mean().item(), 4)
+    report["a_diag_torch_top1_vs_fp32"] = round((lt.argmax(-1) == l32.argmax(-1)).float().mean().item(), 4)
+    report["a_diag_mean_abs_diff"] = round((lf - lt).abs().mean().item(), 5)
+    print(f"M2a diag: |flash-fp32|max={e_flash:.4f} |torch_bf16-fp32|max={e_torch:.4f} "
+          f"mean|flash-torch|={report['a_diag_mean_abs_diff']}")
     print(f"M2a flash-vs-torch max_abs_diff={diff:.4f} (<0.15) top1_agree={top1:.4f} (>=0.99)")
     assert diff < 0.15 and top1 >= 0.99
 
@@ -101,6 +127,14 @@ def test_c_greedy_vs_hf_bf16(flash_engine, report):
     tok = flash_engine.tokenizer
     prompts = [tok.encode(p) for p in PROMPTS]
     refs = [hf_greedy(hf, p, 128, return_gaps=True) for p in prompts]
+    # Diagnostic baseline: HF against ITSELF with a different attention kernel.
+    hf.config._attn_implementation = "eager"
+    hf.set_attn_implementation("eager") if hasattr(hf, "set_attn_implementation") else None
+    eager = [hf_greedy(hf, p, 128) for p in prompts]
+    base = [compare_tokens(r[0], e, r[1])[0] for r, e in zip(refs, eager)]
+    report["c_diag_hf_sdpa_vs_hf_eager_exact"] = f"{base.count('exact')}/8"
+    report["c_diag_hf_sdpa_vs_hf_eager_ok"] = f"{sum(b != 'mismatch' for b in base)}/8"
+    print(f"M2c diag: HF-sdpa vs HF-eager (both bf16) exact={base.count('exact')}/8")
     del hf
     torch.cuda.empty_cache()
     outs = flash_engine.generate(prompts, SamplingParams(max_tokens=128, ignore_eos=True))
