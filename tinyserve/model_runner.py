@@ -84,9 +84,12 @@ class ModelRunner:
         self.num_kv_blocks = self._allocate_kv_cache()
         self.dummy_block = self.num_kv_blocks  # the extra block, never allocated
         self.graphs: dict[int, torch.cuda.CUDAGraph] = {}
-        # Graphs cover the DECODE path only; with spec decoding every step is SPEC.
-        if not cfg.enforce_eager and self.device.type == "cuda" and not cfg.spec_method:
-            self._capture_cuda_graphs()
+        self.spec_graphs: dict[int, torch.cuda.CUDAGraph] = {}
+        if not cfg.enforce_eager and self.device.type == "cuda":
+            if cfg.spec_method:
+                self._capture_spec_graphs()  # M9(c): the target VERIFY forward; the draft stays eager
+            else:
+                self._capture_cuda_graphs()
 
     # ------------------------------------------------------------------ KV pool
     def _kv_bytes_per_block(self) -> int:
@@ -278,8 +281,12 @@ class ModelRunner:
             pos += range(n - 1, n - 1 + blk)
             slots += self._slots(s, n - 1, n - 1 + blk)
             k_lens.append(n - 1 + blk)
-        set_attn_metadata(self._varlen_meta(seqs, [blk] * len(seqs), k_lens, slots, paged=True))
-        hidden, aux = self.model(ids, self._t(pos))
+        graph_bs = next((b for b in sorted(self.spec_graphs) if b >= len(seqs)), None)
+        if graph_bs is not None:
+            hidden, aux = self._replay_spec_graph(seqs, ids, pos, slots, k_lens, graph_bs)
+        else:
+            set_attn_metadata(self._varlen_meta(seqs, [blk] * len(seqs), k_lens, slots, paged=True))
+            hidden, aux = self.model(ids, self._t(pos))
         logits = self.model.compute_logits(hidden)
         target_argmax = logits.argmax(-1).view(len(seqs), blk)
         num_acc, new_tokens = greedy_accept(drafts.to(self.device), target_argmax)
@@ -332,6 +339,70 @@ class ModelRunner:
             self.graphs[bs] = g
             torch.cuda.synchronize()
         set_attn_metadata(None)
+
+    @torch.inference_mode()
+    def _capture_spec_graphs(self) -> None:
+        """M9(c): capture the spec VERIFY forward (blk tokens per sequence)
+        per batch size. Its shape is static: cu_seqlens_q is always
+        0, blk, 2*blk, ...; only the VALUES of cu_seqlens_k, slots, positions
+        and block tables change, and those live in static buffers.
+        max_seqlen_k is fixed at an upper bound (the kernel masks by the real
+        cu_seqlens_k). Padded rows attend to / write into the dummy block."""
+        cfg = self.cfg
+        sizes = sorted(b for b in cfg.cuda_graph_batch_sizes if b <= cfg.max_num_seqs)
+        if not sizes:
+            return
+        blk, max_bs, width = cfg.spec_block_size, sizes[-1], cfg.max_blocks_per_seq
+        n_max = max_bs * blk
+        dummy_slot = self.dummy_block * self.block_size
+        dev = self.device
+        self.v_ids = torch.zeros(n_max, dtype=torch.long, device=dev)
+        self.v_pos = torch.arange(blk, device=dev).repeat(max_bs)
+        self.v_slots = (dummy_slot + torch.arange(blk, device=dev)).repeat(max_bs)
+        self.v_cu_q = torch.arange(max_bs + 1, dtype=torch.int32, device=dev) * blk
+        self.v_cu_k = self.v_cu_q.clone()
+        self.v_bt = torch.full((max_bs, width), self.dummy_block, dtype=torch.int32, device=dev)
+        self.v_hidden = torch.zeros(n_max, self.hf_config.hidden_size, dtype=self.dtype, device=dev)
+        n_aux = len(self.model.aux_layer_ids)
+        self.v_aux = torch.zeros(n_max, n_aux * self.hf_config.hidden_size, dtype=self.dtype, device=dev) if n_aux else None
+        self.v_max_k = cfg.max_model_len + blk
+        pool = None
+        for bs in reversed(sizes):
+            n = bs * blk
+            set_attn_metadata(AttnMetadata(
+                is_varlen=True, causal=True, cu_seqlens_q=self.v_cu_q[: bs + 1], cu_seqlens_k=self.v_cu_k[: bs + 1],
+                max_seqlen_q=blk, max_seqlen_k=self.v_max_k, slot_mapping=self.v_slots[:n], block_tables=self.v_bt[:bs]))
+
+            def fwd():
+                h, a = self.model(self.v_ids[:n], self.v_pos[:n])
+                self.v_hidden[:n] = h
+                if a is not None:
+                    self.v_aux[:n] = a
+
+            fwd()  # warmup (Triton JIT, allocator)
+            torch.cuda.synchronize()
+            g = torch.cuda.CUDAGraph()
+            with torch.cuda.graph(g, pool):
+                fwd()
+            if pool is None:
+                pool = g.pool()
+            self.spec_graphs[bs] = g
+            torch.cuda.synchronize()
+        set_attn_metadata(None)
+
+    def _replay_spec_graph(self, seqs, ids, pos, slots, k_lens, graph_bs):
+        blk, n_real, n = self.cfg.spec_block_size, len(seqs) * self.cfg.spec_block_size, graph_bs * self.cfg.spec_block_size
+        pad = graph_bs - len(seqs)
+        dummy_slot = self.dummy_block * self.block_size
+        self.v_ids[:n_real] = ids
+        self.v_pos[:n] = self._t(pos + list(range(blk)) * pad)
+        self.v_slots[:n] = self._t(slots + list(range(dummy_slot, dummy_slot + blk)) * pad)
+        self.v_cu_k[: graph_bs + 1] = self._t([0, *_cumsum(k_lens + [blk] * pad)], torch.int32)
+        bt = self._block_tables(seqs, self.v_bt.shape[1])
+        self.v_bt[: len(seqs)] = bt
+        self.v_bt[len(seqs) : graph_bs] = self.dummy_block
+        self.spec_graphs[graph_bs].replay()
+        return self.v_hidden[:n_real], (self.v_aux[:n_real] if self.v_aux is not None else None)
 
     def _replay_graph(self, seqs: list[Sequence], graph_bs: int) -> torch.Tensor:
         n = len(seqs)
