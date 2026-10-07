@@ -4,8 +4,11 @@ Inputs are FLAT: all tokens of all sequences in the batch are concatenated
 into one [N] vector with an explicit position per token. The attention layer
 uses the per-forward AttnMetadata to know where each sequence starts.
 
-Module and parameter names mirror Hugging Face (`model.layers.3.self_attn.q_proj`
-...) so safetensors checkpoints load by name. Numerics mirror HF too (RMSNorm
+Module and parameter names mirror Hugging Face (`model.layers.3.self_attn.o_proj`
+...) so safetensors checkpoints load by name. Two projections are fused for
+speed (one bigger GEMM instead of several small ones): q/k/v -> `qkv_proj`
+and gate/up -> `gate_up_proj`. Each fused module lists its `shard_sizes`, and
+the loader copies `q_proj.weight` etc. into the matching rows. Numerics mirror HF too (RMSNorm
 in float32, RoPE tables computed in float32) so float64 CPU tests can demand
 near-bitwise agreement with `transformers`.
 """
@@ -68,9 +71,11 @@ class Qwen3Attention(nn.Module):
         self.num_kv_heads = cfg.num_key_value_heads
         self.head_dim = getattr(cfg, "head_dim", None) or cfg.hidden_size // cfg.num_attention_heads
         bias = getattr(cfg, "attention_bias", False)
-        self.q_proj = nn.Linear(cfg.hidden_size, self.num_heads * self.head_dim, bias=bias)
-        self.k_proj = nn.Linear(cfg.hidden_size, self.num_kv_heads * self.head_dim, bias=bias)
-        self.v_proj = nn.Linear(cfg.hidden_size, self.num_kv_heads * self.head_dim, bias=bias)
+        self.q_size = self.num_heads * self.head_dim
+        self.kv_size = self.num_kv_heads * self.head_dim
+        self.qkv_proj = nn.Linear(cfg.hidden_size, self.q_size + 2 * self.kv_size, bias=bias)
+        self.shard_sizes = {"qkv_proj": {"q_proj": (0, self.q_size), "k_proj": (self.q_size, self.kv_size),
+                                         "v_proj": (self.q_size + self.kv_size, self.kv_size)}}
         self.o_proj = nn.Linear(self.num_heads * self.head_dim, cfg.hidden_size, bias=bias)
         # Qwen3's QK-norm: RMSNorm over each head's vector, BEFORE RoPE.
         self.q_norm = RMSNorm(self.head_dim, cfg.rms_norm_eps)
@@ -80,9 +85,10 @@ class Qwen3Attention(nn.Module):
 
     def forward(self, positions: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
         n = x.shape[0]
-        q = self.q_norm(self.q_proj(x).view(n, self.num_heads, self.head_dim))
-        k = self.k_norm(self.k_proj(x).view(n, self.num_kv_heads, self.head_dim))
-        v = self.v_proj(x).view(n, self.num_kv_heads, self.head_dim)
+        q, k, v = self.qkv_proj(x).split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+        q = self.q_norm(q.reshape(n, self.num_heads, self.head_dim))
+        k = self.k_norm(k.reshape(n, self.num_kv_heads, self.head_dim))
+        v = v.reshape(n, self.num_kv_heads, self.head_dim)
         q, k = self.rope[0](positions, q, k)
         o = self.attn(q, k, v)
         return self.o_proj(o.reshape(n, -1))
@@ -93,12 +99,15 @@ class Qwen3MLP(nn.Module):
 
     def __init__(self, cfg):
         super().__init__()
-        self.gate_proj = nn.Linear(cfg.hidden_size, cfg.intermediate_size, bias=False)
-        self.up_proj = nn.Linear(cfg.hidden_size, cfg.intermediate_size, bias=False)
+        self.intermediate_size = cfg.intermediate_size
+        self.gate_up_proj = nn.Linear(cfg.hidden_size, 2 * cfg.intermediate_size, bias=False)
+        self.shard_sizes = {"gate_up_proj": {"gate_proj": (0, cfg.intermediate_size),
+                                             "up_proj": (cfg.intermediate_size, cfg.intermediate_size)}}
         self.down_proj = nn.Linear(cfg.intermediate_size, cfg.hidden_size, bias=False)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.down_proj(F.silu(self.gate_proj(x)) * self.up_proj(x))
+        gate, up = self.gate_up_proj(x).split(self.intermediate_size, dim=-1)
+        return self.down_proj(F.silu(gate) * up)
 
 
 class Qwen3DecoderLayer(nn.Module):
