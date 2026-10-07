@@ -5,3 +5,6 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | date (UTC) | command | GPU | wall min | est $ (wall×$1.12/60) | billing month-to-date $ | purpose / outcome |
 |---|---|---|---|---|---|---|
 | 2026-10-07 01:27 | `modal run modal_app.py::smoke` | L4 | 0.3 | 0.006 | 0.03 | M0 env smoke |
+| 2026-10-07 01:36 | `modal run modal_app.py::gpu_tests --suite m2` | L4 | 1.2 | 0.022 | 0.06 | M2 GPU tests: FAIL |
+| 2026-10-07 01:40 | `modal run modal_app.py::gpu_tests --suite m2` | L4 | 2.0 | 0.038 | 0.14 | M2 GPU tests: FAIL |
+| 2026-10-07 01:44 | `modal run modal_app.py::gpu_tests --suite m2` | L4 | 3.6 | 0.066 | 0.22 | M2 GPU tests: FAIL |

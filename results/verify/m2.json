@@ -1,0 +1,68 @@
+{
+  "metrics": {
+    "a_max_abs_diff": 0.75,
+    "a_top1_agree": 0.9955,
+    "a_diag_flash_vs_fp32": 0.8868,
+    "a_diag_torch_bf16_vs_fp32": 0.7737,
+    "a_diag_flash_top1_vs_fp32": 0.9955,
+    "a_diag_torch_top1_vs_fp32": 0.9911,
+    "a_diag_mean_abs_diff": 0.04117,
+    "b_triton_store_exact": true,
+    "c_diag_hf_sdpa_vs_hf_eager_exact": "3/8",
+    "c_diag_hf_sdpa_vs_hf_eager_ok": "8/8",
+    "c_exact": "3/8",
+    "c_exact_or_near_tie": "8/8",
+    "c_details": [
+      {
+        "verdict": "near_tie",
+        "diverge_at": 12,
+        "gap": 0.0625
+      },
+      {
+        "verdict": "near_tie",
+        "diverge_at": 78,
+        "gap": 0.125
+      },
+      {
+        "verdict": "exact",
+        "diverge_at": null,
+        "gap": null
+      },
+      {
+        "verdict": "near_tie",
+        "diverge_at": 10,
+        "gap": 0.0
+      },
+      {
+        "verdict": "exact",
+        "diverge_at": null,
+        "gap": null
+      },
+      {
+        "verdict": "exact",
+        "diverge_at": null,
+        "gap": null
+      },
+      {
+        "verdict": "near_tie",
+        "diverge_at": 15,
+        "gap": 0.125
+      },
+      {
+        "verdict": "near_tie",
+        "diverge_at": 97,
+        "gap": 0.125
+      }
+    ]
+  },
+  "tests": {
+    "test_a_flash_vs_torch_backend": "failed",
+    "test_b_triton_store_equals_torch_store": "passed",
+    "test_c_greedy_vs_hf_bf16": "failed"
+  },
+  "status": "FAIL",
+  "finished_utc": "2026-10-07 01:44:20",
+  "git_sha": "19523b5",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 1
+}
