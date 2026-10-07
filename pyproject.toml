@@ -1,0 +1,38 @@
+[project]
+name = "tinyserve"
+version = "0.1.0"
+description = "A small LLM inference engine for Qwen3: paged KV cache, continuous batching, prefix caching, CUDA graphs, OpenAI server, DFlash speculative decoding."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch==2.8.0",
+    "transformers==4.57.3",
+    "safetensors",
+    "xxhash",
+    "numpy",
+    "fastapi",
+    "uvicorn",
+    "httpx",
+    "modal==1.6.1",
+    "huggingface_hub",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "matplotlib",
+    "datasets",
+    "pandas",
+    "pyarrow",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: real-model CPU tests (downloads weights)",
+    "gpu: needs a CUDA GPU (runs on Modal only)",
+]
