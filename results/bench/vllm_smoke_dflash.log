@@ -1,0 +1,1 @@
+vllm 0.30.0 model=Qwen/Qwen3-4B dflash=True startup=289s status=200 text='4.' spec_counters=(2.0, 1.0)

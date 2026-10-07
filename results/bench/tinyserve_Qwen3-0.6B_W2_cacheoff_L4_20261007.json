@@ -1,0 +1,58 @@
+{
+  "engine": "tinyserve",
+  "engine_version": "2485804",
+  "model": "Qwen/Qwen3-0.6B",
+  "gpu": "NVIDIA L4",
+  "driver": "580.95.05",
+  "workload": "W2",
+  "config": {
+    "prefix_cache": false,
+    "groups": 8,
+    "per_group": 16,
+    "prefix": 2048,
+    "suffix": "U[64,128]",
+    "output_len": 128
+  },
+  "points": [
+    {
+      "concurrency": 16,
+      "num_requests": 128,
+      "errors": 2,
+      "error_samples": [],
+      "ttft_ms": {
+        "p50": 1051.631,
+        "p90": 1718.714,
+        "p99": 1781.491,
+        "mean": 1026.317
+      },
+      "itl_ms": {
+        "p50": 28.899,
+        "p90": 31.246,
+        "p99": 58.917,
+        "mean": 35.267
+      },
+      "tpot_ms": {
+        "p50": 34.217,
+        "p90": 40.338,
+        "p99": 42.807,
+        "mean": 34.631
+      },
+      "e2e_ms": {
+        "p50": 5373.703,
+        "p90": 5670.909,
+        "p99": 5678.315,
+        "mean": 5424.474
+      },
+      "output_tokens": 16128,
+      "tokens_per_chunk": 1.037,
+      "output_tok_s": 371.42,
+      "req_s": 2.902,
+      "wall_s": 43.42,
+      "tau": null,
+      "repeat": false
+    }
+  ],
+  "server_startup_s": 14.0,
+  "key": "W2_cacheoff",
+  "started_utc": "2026-10-07T02:54:37Z"
+}
