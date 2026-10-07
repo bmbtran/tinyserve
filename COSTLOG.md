@@ -12,3 +12,6 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | 2026-10-07 01:59 | `modal run modal_app.py::gpu_tests --suite m4` | L4 | 1.0 | 0.018 | 0.47 | M4 GPU tests: FAIL |
 | 2026-10-07 02:01 | `modal run modal_app.py::gpu_tests --suite m5` | L4 | 1.0 | 0.019 | 0.51 | M5 GPU tests: PASS |
 | 2026-10-07 02:09 | `modal run modal_app.py::gpu_tests --suite m6` | L4 | 3.4 | 0.064 | 0.54 | M6 GPU tests: PASS |
+| 2026-10-07 02:29 | `modal run modal_app.py::vllm_smoke` | L4 | 3.3 | 0.061 | 0.96 | M8a vLLM smoke: ERROR |
+| 2026-10-07 02:32 | `modal run modal_app.py::gpu_tests --suite m7` | L4 | 12.0 | 0.224 | 1.15 | M7 GPU tests: FAIL |
+| 2026-10-07 02:33 | `modal run modal_app.py::vllm_smoke` | L4 | 3.7 | 0.069 | 1.23 | M8a vLLM smoke: ok |

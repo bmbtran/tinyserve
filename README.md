@@ -49,3 +49,26 @@ Artifacts: `results/verify/m4.json`, `results/verify/m4.log`.
   distributions, so near-ties are even more common than with real text. Every divergence was a near-tie (< 0.5 logit gap).
   The CPU float64 test shows cache-on == cache-off exactly (`tests/cpu/test_prefix_cache.py`).
   (This run did not store per-divergence gaps; later suites do.)
+
+### M7: DFlash (speedup and reference parity pass; MT-Bench tau and the bf16 exact count FAIL)
+
+Artifacts: `results/verify/m7.json`, `results/verify/m7.log`. Qwen3-4B + `z-lab/Qwen3-4B-DFlash-b16`, bf16, L4, greedy, max 512 tokens, thinking disabled.
+
+* **(a) tau parity with the z-lab reference (PASS):** tinyserve tau at bs=1 is within 2% of the vendored
+  reference `spec_generate` on the same 8 prompts per dataset (GSM8K 5.65 vs 5.54, HumanEval 6.08 vs 5.96,
+  MT-Bench 2.08 vs 2.05). On CPU in float64 the per-step acceptance sequence *and* the draft logits match the
+  reference exactly (`tests/cpu/test_dflash_spec.py`, mutation-checked: injected RoPE-offset and missing-k_norm bugs make it fail).
+* **(b) tau vs paper: GSM8K 6.02 (0.92x of 6.53) and HumanEval 6.15 (0.93x of 6.64) pass; MT-Bench 2.72 vs 4.35 (0.62x) FAILS the >= 3.0 target.**
+  The reference implementation itself gets only 2.05 on our MT-Bench prompts, so this is not a tinyserve bug.
+  Likely causes, none verified: we use only the first turn of each MT-Bench conversation and cap output
+  at 512 tokens (the paper uses 2048, and longer generations tend to accept more); the paper's exact MT-Bench prompt
+  formatting may differ. GSM8K/HumanEval are below the paper by ~7%, consistent with the 512-token cap.
+* **(c) lossless spec vs non-spec in bf16: 32/96 exact (target >= 90), 93/96 exact-or-near-tie (target 96/96): FAIL.**
+  61 of 64 divergences happen at a top-1/top-2 gap of 0, 0.125 or 0.25 (bf16-quantized logits). The other 3 diverge at a gap of
+  **exactly 0.5**, right at the rule's boundary (near-tie means < 0.5), so by the pre-declared rule they are mismatches. The verify
+  step runs a 16-token causal varlen attention against the paged cache while non-spec decode runs `flash_attn_with_kvcache`
+  one token at a time, so their bf16 rounding differs, the same mechanism as M3/M4. The float64 CPU tests show DFlash spec
+  output == non-spec output token for token (oracle, random and real-draft proposers, with preemption and prefix caching).
+  Not done (the run did not save which prompts diverged): re-run those 3 prompts in float32 on the GPU (torch backend) to show they converge.
+* **(d) speedup (PASS): 3.12x at bs=1** (85.1 vs 27.3 decode tok/s on GSM8K; non-spec uses CUDA graphs, DFlash runs eager),
+  3.23x at c=4 and 2.98x at c=16. Below the paper's 5.15x on H200, as expected for an eager spec path on a 300 GB/s card.

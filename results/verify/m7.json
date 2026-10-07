@@ -1,0 +1,496 @@
+{
+  "metrics": {
+    "ref_tau": {
+      "gsm8k": 5.541,
+      "humaneval": 5.956,
+      "mtbench": 2.051
+    },
+    "tinyserve_tau_bs1_first8": {
+      "gsm8k": 5.653,
+      "humaneval": 6.076,
+      "mtbench": 2.083
+    },
+    "tinyserve_tau_all32_c16": {
+      "gsm8k": 6.023,
+      "humaneval": 6.152,
+      "mtbench": 2.716
+    },
+    "engine_metrics_spec": {
+      "running": 0,
+      "waiting": 0,
+      "kv_usage": 0.0,
+      "num_kv_blocks": 182,
+      "prefix_hit_rate": 0.0,
+      "prefix_query_tokens": 16503,
+      "prefix_hit_tokens": 0,
+      "spec_tau": 4.796043656207367,
+      "spec_steps": 11728,
+      "num_preemptions": 0,
+      "prompt_tokens": 16503,
+      "generation_tokens": 56067,
+      "finished": 185,
+      "steps": {
+        "PREFILL": 117,
+        "DECODE": 0,
+        "SPEC": 2904
+      }
+    },
+    "a_tau_parity": {
+      "gsm8k": {
+        "ref": 5.541,
+        "tinyserve": 5.653,
+        "ratio": 1.02
+      },
+      "humaneval": {
+        "ref": 5.956,
+        "tinyserve": 6.076,
+        "ratio": 1.02
+      },
+      "mtbench": {
+        "ref": 2.051,
+        "tinyserve": 2.083,
+        "ratio": 1.016
+      }
+    },
+    "a_diag_identical_outputs_vs_reference": "5/24",
+    "b_tau_vs_paper": {
+      "gsm8k": {
+        "tinyserve": 6.023,
+        "paper": 6.53,
+        "ratio": 0.922,
+        "min": 4.5
+      },
+      "humaneval": {
+        "tinyserve": 6.152,
+        "paper": 6.64,
+        "ratio": 0.927,
+        "min": 4.6
+      },
+      "mtbench": {
+        "tinyserve": 2.716,
+        "paper": 4.35,
+        "ratio": 0.624,
+        "min": 3.0
+      }
+    },
+    "c_exact": "32/96",
+    "c_exact_or_near_tie": "93/96",
+    "c_divergences": [
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 26,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 56,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 44,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 131,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 95,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 38,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 212,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 25,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "mismatch",
+        "at": 97,
+        "gap": 0.5
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 44,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 242,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 87,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 146,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 21,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 8,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 5,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 39,
+        "gap": 0.25
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 33,
+        "gap": 0.0
+      },
+      {
+        "dataset": "gsm8k",
+        "verdict": "near_tie",
+        "at": 75,
+        "gap": 0.125
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 9,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 207,
+        "gap": 0.125
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 23,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 112,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 90,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 278,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 336,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 84,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 250,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 256,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 86,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 137,
+        "gap": 0.125
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "mismatch",
+        "at": 118,
+        "gap": 0.5
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 52,
+        "gap": 0.25
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 44,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 65,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 264,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "mismatch",
+        "at": 114,
+        "gap": 0.5
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 29,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 249,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 3,
+        "gap": 0.0
+      },
+      {
+        "dataset": "humaneval",
+        "verdict": "near_tie",
+        "at": 276,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 66,
+        "gap": 0.0
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 20,
+        "gap": 0.0
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 14,
+        "gap": 0.0
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 60,
+        "gap": 0.125
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 36,
+        "gap": 0.125
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 39,
+        "gap": 0.125
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 161,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 62,
+        "gap": 0.125
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 55,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 60,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 22,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 290,
+        "gap": 0.0
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 9,
+        "gap": 0.125
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 44,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 145,
+        "gap": 0.0
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 83,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 330,
+        "gap": 0.125
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 156,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 18,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 261,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 236,
+        "gap": 0.25
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 160,
+        "gap": 0.0
+      },
+      {
+        "dataset": "mtbench",
+        "verdict": "near_tie",
+        "at": 223,
+        "gap": 0.25
+      }
+    ],
+    "d_speed": {
+      "1": {
+        "dflash_tok_s": 85.1,
+        "base_tok_s": 27.3,
+        "speedup": 3.122
+      },
+      "4": {
+        "dflash_tok_s": 317.6,
+        "base_tok_s": 98.3,
+        "speedup": 3.23
+      },
+      "16": {
+        "dflash_tok_s": 873.3,
+        "base_tok_s": 293.5,
+        "speedup": 2.975
+      }
+    }
+  },
+  "tests": {
+    "test_1_reference": "passed",
+    "test_2_tinyserve_spec": "passed",
+    "test_3_tinyserve_nonspec": "passed",
+    "test_4a_tau_parity_with_reference": "passed",
+    "test_4b_tau_vs_paper": "failed",
+    "test_4c_lossless": "failed",
+    "test_4d_speedup": "passed"
+  },
+  "status": "FAIL",
+  "finished_utc": "2026-10-07 02:32:05",
+  "git_sha": "16b6bbd",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 1
+}

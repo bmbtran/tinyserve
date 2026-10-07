@@ -368,7 +368,10 @@ def _with_server(cmd, fn):
     from bench.client import wait_for_health
 
     print("$ " + " ".join(cmd), flush=True)
-    proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+    # vLLM 0.30's FlashInfer sampler JIT-compiles with nvcc, which the slim image
+    # lacks (M8a smoke failure); use vLLM's PyTorch sampler instead.
+    env = {**os.environ, "VLLM_USE_FLASHINFER_SAMPLER": "0"}
+    proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr, env=env)
     try:
         waited = wait_for_health(f"http://127.0.0.1:{PORT}", 1200, proc)
         print(f"  healthy after {waited:.0f}s", flush=True)

@@ -1,0 +1,78 @@
+
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]
+Loading checkpoint shards:  33%|███▎      | 1/3 [00:02<00:05,  2.62s/it]
+Loading checkpoint shards:  67%|██████▋   | 2/3 [00:04<00:02,  2.05s/it]
+Loading checkpoint shards: 100%|██████████| 3/3 [00:04<00:00,  1.44s/it]
+  reference gsm8k: tau=5.541 over 423 steps
+  reference humaneval: tau=5.956 over 436 steps
+  reference mtbench: tau=2.051 over 979 steps
+.  tinyserve bs=1 gsm8k: tau=5.653 decode 85.1 tok/s
+  tinyserve bs=1 humaneval: tau=6.076 decode 88.1 tok/s
+  tinyserve bs=1 mtbench: tau=2.083 decode 31.7 tok/s
+  tinyserve c=16 gsm8k: tau=6.023
+  tinyserve c=16 humaneval: tau=6.152
+  tinyserve c=16 mtbench: tau=2.716
+  tinyserve DFlash gsm8k c=4: 317.6 output tok/s
+  tinyserve DFlash gsm8k c=16: 873.3 output tok/s
+.  non-spec engine graphs: [1, 2, 4, 8, 16]
+  non-spec bs=1 gsm8k decode 27.3 tok/s
+  non-spec gsm8k c=4: 98.3 output tok/s
+  non-spec gsm8k c=16: 293.5 output tok/s
+.M7a gsm8k: tinyserve tau=5.653 reference tau=5.541 ratio=1.020 (within +-10%)
+M7a humaneval: tinyserve tau=6.076 reference tau=5.956 ratio=1.020 (within +-10%)
+M7a mtbench: tinyserve tau=2.083 reference tau=2.051 ratio=1.016 (within +-10%)
+.M7b gsm8k: tau=6.023 paper=6.53 ratio=0.922 (>= 4.5)
+M7b humaneval: tau=6.152 paper=6.64 ratio=0.927 (>= 4.6)
+M7b mtbench: tau=2.716 paper=4.35 ratio=0.624 (>= 3.0)
+FM7c spec vs non-spec: exact=32/96 (>=90) exact_or_near_tie=93/96 (96)
+FM7d gsm8k c=1: DFlash 85.1 tok/s vs non-spec (CUDA graphs) 27.3 tok/s -> 3.12x (>= 2.0)
+M7d gsm8k c=4: DFlash 317.6 tok/s vs non-spec (CUDA graphs) 98.3 tok/s -> 3.23x
+M7d gsm8k c=16: DFlash 873.3 tok/s vs non-spec (CUDA graphs) 293.5 tok/s -> 2.98x
+.
+M7 FAIL a_diag_identical_outputs_vs_reference=5/24 c_exact=32/96 c_exact_or_near_tie=93/96
+
+=================================== FAILURES ===================================
+_____________________________ test_4b_tau_vs_paper _____________________________
+
+report = {'ref_tau': {'gsm8k': 5.541, 'humaneval': 5.956, 'mtbench': 2.051}, 'tinyserve_tau_bs1_first8': {'gsm8k': 5.653, 'huma...mtbench': 2.716}, 'engine_metrics_spec': {'running': 0, 'waiting': 0, 'kv_usage': 0.0, 'num_kv_blocks': 182, ...}, ...}
+
+    def test_4b_tau_vs_paper(report):
+        rows, ok = {}, True
+        for d in SPEC_DATASETS:
+            t, p = S["ts_tau_all"][d], PAPER_TAU_QWEN3_4B[d]
+            rows[d] = {"tinyserve": round(t, 3), "paper": p, "ratio": round(t / p, 3), "min": PAPER_MIN[d]}
+            ok &= t >= PAPER_MIN[d]
+            print(f"M7b {d}: tau={t:.3f} paper={p} ratio={t / p:.3f} (>= {PAPER_MIN[d]})")
+        report["b_tau_vs_paper"] = rows
+>       assert ok
+E       assert False
+
+tests/gpu/test_m7_gpu.py:185: AssertionError
+_______________________________ test_4c_lossless _______________________________
+
+report = {'ref_tau': {'gsm8k': 5.541, 'humaneval': 5.956, 'mtbench': 2.051}, 'tinyserve_tau_bs1_first8': {'gsm8k': 5.653, 'huma...mtbench': 2.716}, 'engine_metrics_spec': {'running': 0, 'waiting': 0, 'kv_usage': 0.0, 'num_kv_blocks': 182, ...}, ...}
+
+    def test_4c_lossless(report):
+        verdicts = []
+        for d in SPEC_DATASETS:
+            for spec, (base, gaps) in zip(S["spec_outputs"][d], S["base_outputs"][d]):
+                verdicts.append((d,) + compare_tokens(base, spec, gaps))
+        n_exact = sum(v[1] == "exact" for v in verdicts)
+        n_ok = sum(v[1] != "mismatch" for v in verdicts)
+        report["c_exact"], report["c_exact_or_near_tie"] = f"{n_exact}/96", f"{n_ok}/96"
+        report["c_divergences"] = [{"dataset": v[0], "verdict": v[1], "at": v[2], "gap": v[3]} for v in verdicts if v[1] != "exact"]
+        print(f"M7c spec vs non-spec: exact={n_exact}/96 (>=90) exact_or_near_tie={n_ok}/96 (96)")
+>       assert n_exact >= 90 and n_ok == 96
+E       assert (32 >= 90)
+
+tests/gpu/test_m7_gpu.py:198: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m7_gpu.py::test_1_reference
+PASSED tests/gpu/test_m7_gpu.py::test_2_tinyserve_spec
+PASSED tests/gpu/test_m7_gpu.py::test_3_tinyserve_nonspec
+PASSED tests/gpu/test_m7_gpu.py::test_4a_tau_parity_with_reference
+PASSED tests/gpu/test_m7_gpu.py::test_4d_speedup
+FAILED tests/gpu/test_m7_gpu.py::test_4b_tau_vs_paper - assert False
+FAILED tests/gpu/test_m7_gpu.py::test_4c_lossless - assert (32 >= 90)
+2 failed, 5 passed in 709.25s (0:11:49)
