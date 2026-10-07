@@ -1079,3 +1079,81 @@ PASSED tests/gpu/test_m6_gpu.py::test_openai_client_streaming
 PASSED tests/gpu/test_m6_gpu.py::test_concurrency_32_x_64
 2 passed in 33.77s
 ```
+
+## FIXPLAN B1 (fp32) — 2026-10-07 16:17:26 UTC — git `06bc200` (dirty tree)
+
+Command: `modal run modal_app.py::gpu_tests --suite fp32`
+Source file: `results/verify/fp32.log`
+Uncommitted files at record time: `modal_app.py`, `tinyserve/server/api.py`, `tinyserve/server/engine_process.py` (--allow-dirty)
+Note: Ran on commit 06bc200; the working tree only differs by the server-shutdown fix (api.py/engine_process.py/modal_app.py), which this suite does not exercise.
+
+```text
+B1b fp32 prefill logits vs HF fp32: max_abs=9.06e-05 (<1e-3)
+B1a fp32 greedy vs HF fp32: exact=8/8 (>=7) exact_or_fp32_near_tie=8/8 (8)
+B1b bf16 vs fp32 truth: flash err=0.615 torch-bf16 err=0.580 ratio=1.06 (<=1.25) flash top1=0.9955 (>=0.99)
+.B1c fp32 batched(32) vs sequential: exact=64/64 (>=60) exact_or_fp32_near_tie=64/64 (64)
+.B1d fp32 prefix cache on vs off: exact=32/32 (>=31) exact_or_fp32_near_tie=32/32 (32) hit_rate=0.939
+.
+FP32 PASS b1b_fp32_vs_hf_max_abs=9.059906005859375e-05 b1a_exact=8/8 b1a_exact_or_fp32_near_tie=8/8 b1b_flash_bf16_err_vs_fp32=0.6149 b1b_torch_bf16_err_vs_fp32=0.5802 b1b_flash_err_ratio=1.06 b1b_flash_top1_vs_fp32=0.9955 b1c_exact=64/64 b1c_exact_or_fp32_near_tie=64/64 b1d_exact=32/32 b1d_exact_or_fp32_near_tie=32/32 b1d_hit_rate=0.9394
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_fp32_gpu.py::test_b1a_b1b_vs_hf_fp32
+PASSED tests/gpu/test_fp32_gpu.py::test_b1c_batched_vs_sequential_fp32
+PASSED tests/gpu/test_fp32_gpu.py::test_b1d_prefix_cache_fp32
+3 passed in 684.39s (0:11:24)
+```
+
+## FIXPLAN A1 (lossless) — 2026-10-07 16:17:27 UTC — git `06bc200` (dirty tree)
+
+Command: `modal run modal_app.py::gpu_tests --suite lossless`
+Source file: `results/verify/lossless.log`
+Uncommitted files at record time: `modal_app.py`, `tinyserve/server/api.py`, `tinyserve/server/engine_process.py` (--allow-dirty)
+Note: Ran on commit 06bc200; the working tree only differs by the server-shutdown fix (api.py/engine_process.py/modal_app.py), which this suite does not exercise.
+
+```text
+A1 bf16 (graph verify) spec vs non-spec: exact=29/96 exact_or_near_tie=95/96
+  bf16 MISMATCH mtbench#21 at token 5 gap=0.5
+.A1 fp32 phase on 9 prompts (1 bf16 mismatches)
+  mtbench#21: bf16 mismatch at 5 (gap 0.5) | fp32 truth gap there 0.6616, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#2: bf16 near_tie at 129 (gap 0.125) | fp32 truth gap there 0.0636, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#3: bf16 near_tie at 9 (gap 0.0) | fp32 truth gap there 0.0063, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#4: bf16 near_tie at 56 (gap 0.25) | fp32 truth gap there 0.1394, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#5: bf16 near_tie at 58 (gap 0.25) | fp32 truth gap there 0.0293, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#8: bf16 near_tie at 14 (gap 0.125) | fp32 truth gap there 0.0406, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#9: bf16 near_tie at 95 (gap 0.0) | fp32 truth gap there 0.2198, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#10: bf16 near_tie at 95 (gap 0.0) | fp32 truth gap there 0.0820, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#15: bf16 near_tie at 25 (gap 0.0) | fp32 truth gap there 0.2487, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+A1 fp32 spec vs non-spec: exact=9/9 ok=9/9; every bf16 mismatch exact in fp32: True
+.
+LOSSLESS PASS bf16_exact=29/96 bf16_exact_or_near_tie=95/96 fp32_pairs_exact=9/9 fp32_pairs_ok=9/9 bf16_mismatches_exact_in_fp32=True
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_lossless_gpu.py::test_1_bf16_production
+PASSED tests/gpu/test_lossless_gpu.py::test_2_fp32
+2 passed in 289.27s (0:04:49)
+```
+
+## FIXPLAN C1 (mtbench) — 2026-10-07 16:17:27 UTC — git `06bc200` (dirty tree)
+
+Command: `modal run modal_app.py::gpu_tests --suite mtbench`
+Source file: `results/verify/mtbench.log`
+Uncommitted files at record time: `modal_app.py`, `tinyserve/server/api.py`, `tinyserve/server/engine_process.py` (--allow-dirty)
+Note: Ran on commit 06bc200; the working tree only differs by the server-shutdown fix (api.py/engine_process.py/modal_app.py), which this suite does not exercise.
+
+```text
+C1 MT-Bench i_turn1_512: tau=2.821 over 3176 steps
+C1 MT-Bench ii_turn1_2048: tau=3.078 over 4560 steps
+C1 MT-Bench turn2_only_2048: tau=3.543 over 3927 steps
+C1 MT-Bench iii_both_turns_2048: tau=3.293 over 8487 steps
+C1 mean output tokens {'turn1_512': 278.9375, 'turn1_2048': 437.21875, 'turn2_2048': 432.71875}; turn-1 answers cut at 512: 25%
+C1 tau(iii) = 3.293 (>= 3.0; paper 4.35)
+.
+MTBENCH PASS finish_length_frac_turn1_512=0.25
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_mtbench_gpu.py::test_mtbench_protocols
+1 passed in 131.81s (0:02:11)
+```

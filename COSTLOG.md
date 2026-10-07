@@ -28,3 +28,4 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | 2026-10-07 04:07 | `modal run modal_app.py::gpu_tests --suite lossless` | L4 | 4.9 | 0.092 | 5.30 | LOSSLESS GPU tests: PASS |
 | 2026-10-07 04:14 | `modal run modal_app.py::gpu_tests --suite fp32` | L4 | 11.6 | 0.216 | 5.86 | FP32 GPU tests: PASS |
 | 2026-10-07 04:35 | `modal run modal_app.py::gpu_tests --suite m6` | L4 | 34.6 | 0.647 | 6.62 | M6 GPU tests: ERROR |
+| 2026-10-07 04:53 | `modal run modal_app.py::bench --engine tinyserve --suite core` | L4 | 16.6 | 0.309 | 7.25 | M8 bench tinyserve/core: ERROR |
