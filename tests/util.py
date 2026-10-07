@@ -75,3 +75,28 @@ def compare_tokens(ref: list[int], got: list[int], ref_gaps: list[float] | None,
         gap = ref_gaps[n] if ref_gaps is not None and n < len(ref_gaps) else None
         return ("near_tie" if gap is not None and gap < thr else "mismatch"), n, gap
     return "exact", None, None
+
+
+def closed_loop(engine, prompts, concurrency, params, first_alone=False):
+    """Drive an offline engine like a closed-loop client: keep `concurrency`
+    requests in flight, add a new one whenever one finishes. Returns
+    (sequences in prompt order, wall seconds)."""
+    import time
+
+    t0 = time.perf_counter()
+    order = {}
+    queue = list(enumerate(prompts))
+    if first_alone and queue:
+        i, p = queue.pop(0)
+        order[i] = engine.add_request(p, params)
+        while engine.has_work():
+            engine.step()
+    live = 0
+    while queue or engine.has_work():
+        while queue and live < concurrency:
+            i, p = queue.pop(0)
+            order[i] = engine.add_request(p, params)
+            live += 1
+        _, finished = engine.step()
+        live -= len(finished)
+    return [order[i] for i in range(len(prompts))], time.perf_counter() - t0

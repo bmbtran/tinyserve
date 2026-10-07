@@ -50,6 +50,7 @@ class Sequence:
         self.pending_hidden: Any = None  # target aux hidden for [draft_ctx_len, num_tokens-1)
         self.spec_steps = 0
         self.spec_accepted = 0
+        self.spec_history: list[int] = []  # acceptance length (a + 1) of every spec step
 
         # Debug/testing: top-1 minus top-2 logit for each emitted token (only
         # filled when ModelRunner.record_gaps is on; used by the near-tie rule).

@@ -244,11 +244,21 @@ def gpu_tests_remote(suite: str, git_sha: str, pytest_args: str = "") -> dict:
     env = {**os.environ, "TS_RESULT_JSON": out_json, "TS_GIT_SHA": git_sha, "PYTHONUNBUFFERED": "1"}
     cmd = [sys.executable, "-m", "pytest", f"tests/gpu/test_{suite}_gpu.py", "-s", "-q", "-rA", *pytest_args.split()]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env)
+    # Watchdog: stop pytest before the function's hard timeout so the partial
+    # result JSON (written after every test) still comes back.
+    import threading
+
+    killed = []
+    timer = threading.Timer(1800 - 150, lambda: (killed.append(True), proc.terminate()))
+    timer.start()
     log_lines = []
     for line in proc.stdout:
         print(line, end="")
         log_lines.append(line)
     rc = proc.wait()
+    timer.cancel()
+    if killed:
+        log_lines.append("\nWATCHDOG: pytest terminated before the 1800 s function timeout\n")
     result = json.loads(Path(out_json).read_text()) if Path(out_json).exists() else None
     return {"returncode": rc, "log": "".join(log_lines), "result": result}
 

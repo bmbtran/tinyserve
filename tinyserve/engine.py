@@ -143,6 +143,7 @@ class LLMEngine:
             "tau": s.tau,
             "spec_steps": s.spec_steps,
             "spec_accepted": s.spec_accepted,
+            "spec_history": s.spec_history,
             "logit_gaps": getattr(s, "logit_gaps", None),
             "ttft_s": (s.first_token_time - s.arrival_time) if s.first_token_time else None,
             "token_times": s.token_times,

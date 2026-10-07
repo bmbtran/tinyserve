@@ -16,9 +16,18 @@ def report():
     return REPORT["metrics"]
 
 
+def _dump():
+    path = os.environ.get("TS_RESULT_JSON")
+    if path:
+        with open(path, "w") as f:
+            json.dump(REPORT, f, indent=2, default=str)
+
+
 def pytest_runtest_logreport(report):
     if report.when == "call" or report.outcome != "passed":
         REPORT["tests"][report.nodeid.split("::")[-1]] = report.outcome
+        REPORT.setdefault("status", "INCOMPLETE")
+        _dump()  # partial results survive a watchdog kill
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -37,6 +46,4 @@ def pytest_sessionfinish(session, exitstatus):
     suite = os.path.basename(path or "suite").split(".")[0].upper()
     metrics = " ".join(f"{k}={v}" for k, v in REPORT["metrics"].items() if not isinstance(v, (list, dict)))
     print(f"\n{suite} {status} {metrics}")
-    if path:
-        with open(path, "w") as f:
-            json.dump(REPORT, f, indent=2, default=str)
+    _dump()

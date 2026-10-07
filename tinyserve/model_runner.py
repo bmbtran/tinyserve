@@ -62,6 +62,8 @@ class ModelRunner:
                 if cfg.spec_method == "dflash":
                     from tinyserve.spec.dflash import DFlashDraftModel
 
+                    if draft[0].block_size != cfg.spec_block_size:
+                        raise ValueError(f"draft block_size {draft[0].block_size} != spec_block_size {cfg.spec_block_size}")
                     self.draft_model = DFlashDraftModel(draft[0], self.model, cfg.attn_backend, cfg.use_triton_store, max_positions, self.dtype)
             finally:
                 torch.set_default_dtype(prev)
@@ -82,7 +84,8 @@ class ModelRunner:
         self.num_kv_blocks = self._allocate_kv_cache()
         self.dummy_block = self.num_kv_blocks  # the extra block, never allocated
         self.graphs: dict[int, torch.cuda.CUDAGraph] = {}
-        if not cfg.enforce_eager and self.device.type == "cuda":
+        # Graphs cover the DECODE path only; with spec decoding every step is SPEC.
+        if not cfg.enforce_eager and self.device.type == "cuda" and not cfg.spec_method:
             self._capture_cuda_graphs()
 
     # ------------------------------------------------------------------ KV pool
@@ -129,7 +132,7 @@ class ModelRunner:
                                        max_seqlen_k=max(lens), q_lens=lens, k_lens=lens))
         hidden, aux = self.model(ids, pos)
         rows = max(cfg.max_num_seqs * (cfg.spec_block_size if cfg.spec_method else 1), len(lens))
-        self.model.compute_logits(hidden[: min(rows, n_tok)]).float().argmax(-1)
+        self.model.compute_logits(hidden[: min(rows, n_tok)]).argmax(-1)
         set_attn_metadata(None)
         del hidden, aux
         torch.cuda.synchronize()
@@ -286,6 +289,7 @@ class ModelRunner:
         for b, (s, a) in enumerate(zip(seqs, num_acc.tolist())):
             s.spec_steps += 1
             s.spec_accepted += a
+            s.spec_history.append(a + 1)
             if self.record_gaps:
                 s.logit_gaps.extend(gaps[b][: a + 1])
             if self.draft_model is not None:
