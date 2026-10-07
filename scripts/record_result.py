@@ -25,7 +25,8 @@ IGNORED_PREFIXES = ("results/", "RESULTS.md", "COSTLOG.md")
 
 
 def git(*args: str) -> str:
-    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8").stdout.strip()
+    # rstrip only: porcelain lines start with a meaningful space (" M file").
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8").stdout.rstrip()
 
 
 def dirty_files() -> list[str]:
@@ -63,7 +64,7 @@ def main() -> int:
         output = Path(a.file).read_text(encoding="utf-8", errors="replace").rstrip()
         command, rc = a.command or f"(output file {a.file})", None
 
-    sha = git("rev-parse", "--short", "HEAD") or "no-commit"
+    sha = git("rev-parse", "--short", "HEAD").strip() or "no-commit"
     now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     lines = [
         f"\n## {a.milestone} — {now} — git `{sha}`" + (" (dirty tree)" if dirty else ""),
