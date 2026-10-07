@@ -1,0 +1,19 @@
+{
+  "metrics": {
+    "exact": "14/32",
+    "exact_or_near_tie": "32/32",
+    "hit_rate": 0.9432,
+    "ttft_p50_off_ms": 553.66,
+    "ttft_p50_on_ms": 56.11,
+    "ttft_ratio": 0.101,
+    "ttft_speedup": 9.87
+  },
+  "tests": {
+    "test_prefix_cache_on_vs_off": "failed"
+  },
+  "status": "FAIL",
+  "finished_utc": "2026-10-07 01:59:03",
+  "git_sha": "e13b353",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 1
+}

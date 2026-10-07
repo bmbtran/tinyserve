@@ -36,3 +36,16 @@ Artifacts: `results/verify/m3.json`, `results/verify/m3.log`.
   batched, preempted, random-arrival == solo, token for token), so this is bf16 arithmetic, not
   scheduling or paging. The >= 60/64 target assumed bf16 greedy decoding is far more stable than it is
   for 128-token outputs: 40/64 outputs reach a near-tie within 128 tokens, 20/64 an exact tie.
+
+### M4: prefix cache on vs off in bf16 (hit rate and TTFT pass; exact count FAILs)
+
+Artifacts: `results/verify/m4.json`, `results/verify/m4.log`.
+
+* Hit rate **0.943** (target >= 0.85, PASS) and TTFT p50 **553.7 ms -> 56.1 ms** (ratio 0.101, target <= 0.5, PASS: 9.9x faster).
+* **Outputs cache-on vs cache-off: 14/32 exact (target >= 31), 32/32 exact-or-near-tie (FAIL on the exact count).**
+  With the cache on, the 2048-token prefix is not recomputed: the 64 suffix tokens attend to it
+  through `flash_attn_varlen_func(block_table=...)` instead of in one fresh causal pass, so the bf16
+  rounding differs. The prompts are random token ids, which give the model flat next-token
+  distributions, so near-ties are even more common than with real text. Every divergence was a near-tie (< 0.5 logit gap).
+  The CPU float64 test shows cache-on == cache-off exactly (`tests/cpu/test_prefix_cache.py`).
+  (This run did not store per-divergence gaps; later suites do.)

@@ -9,3 +9,4 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | 2026-10-07 01:40 | `modal run modal_app.py::gpu_tests --suite m2` | L4 | 2.0 | 0.038 | 0.14 | M2 GPU tests: FAIL |
 | 2026-10-07 01:44 | `modal run modal_app.py::gpu_tests --suite m2` | L4 | 3.6 | 0.066 | 0.22 | M2 GPU tests: FAIL |
 | 2026-10-07 01:55 | `modal run modal_app.py::gpu_tests --suite m3` | L4 | 5.9 | 0.111 | 0.42 | M3 GPU tests: FAIL |
+| 2026-10-07 01:59 | `modal run modal_app.py::gpu_tests --suite m4` | L4 | 1.0 | 0.018 | 0.47 | M4 GPU tests: FAIL |

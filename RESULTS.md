@@ -238,3 +238,72 @@ PASSED tests/gpu/test_m3_gpu.py::test_b_offline_throughput
 FAILED tests/gpu/test_m3_gpu.py::test_a_batched_vs_sequential - assert (24 >=...
 1 failed, 1 passed in 345.23s (0:05:45)
 ```
+
+## M4 (CPU) — 2026-10-07 01:59:53 UTC — git `e13b353`
+
+Command: `uv run pytest tests/cpu/test_prefix_cache.py -q`  (exit code 0)
+
+```text
+...                                                                      [100%]
+3 passed in 10.97s
+```
+
+## M4 (GPU) — 2026-10-07 01:59:54 UTC — git `e13b353`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m4`
+Source file: `results/verify/m4.log`
+Note: M4b hit_rate 0.943 (>=0.85) PASS; M4c TTFT ratio 0.101 (<=0.5) PASS, 9.87x; M4a FAIL on exact count 14/32 (>=31), 32/32 exact-or-near-tie.
+
+```text
+M4a cache on vs off: exact=14/32 (>=31) exact_or_near_tie=32/32 (32)
+M4b hit_rate=0.943 (>=0.85)
+M4c TTFT p50 off=553.7ms on=56.1ms ratio=0.101 (<=0.5) ttft_speedup=9.87x
+F
+M4 FAIL exact=14/32 exact_or_near_tie=32/32 hit_rate=0.9432 ttft_p50_off_ms=553.66 ttft_p50_on_ms=56.11 ttft_ratio=0.101 ttft_speedup=9.87
+
+=================================== FAILURES ===================================
+_________________________ test_prefix_cache_on_vs_off __________________________
+
+engine = <tinyserve.engine.LLMEngine object at 0x2b1afd927500>
+report = {'exact': '14/32', 'exact_or_near_tie': '32/32', 'hit_rate': 0.9432, 'ttft_p50_off_ms': 553.66, ...}
+
+    def test_prefix_cache_on_vs_off(engine, report):
+        reqs = w2_shared_prefix(groups=1, per_group=32, prefix_len=2048, suffix=(64, 64), out=64, seed=0)
+        prompts = [r["prompt"] for r in reqs]
+        engine.generate([prompts[0][:300]], SamplingParams(max_tokens=4, ignore_eos=True))  # warmup (unrelated tokens)
+    
+        engine.block_manager.enable_prefix_cache = False
+        engine.runner.record_gaps = True
+        off = closed_loop(engine, prompts, 8)
+        engine.runner.record_gaps = False
+    
+        engine.block_manager.enable_prefix_cache = True
+        engine.block_manager.stats = {"prefix_query_tokens": 0, "prefix_hit_tokens": 0}
+        on = closed_loop(engine, prompts, 8)
+        hit_rate = engine.block_manager.prefix_hit_rate
+    
+        off_by_prompt = {tuple(s.token_ids[: s.num_prompt_tokens]): s for s in off}
+        verdicts = []
+        for s in on:
+            ref = off_by_prompt[tuple(s.token_ids[: s.num_prompt_tokens])]
+            verdicts.append(compare_tokens(ref.completion_token_ids, s.completion_token_ids, ref.logit_gaps)[0])
+        n_exact, n_ok = verdicts.count("exact"), sum(v != "mismatch" for v in verdicts)
+    
+        ttft = lambda seqs: statistics.median((s.first_token_time - s.arrival_time) * 1000 for s in seqs[1:])  # noqa: E731
+        t_off, t_on = ttft(off), ttft(on)
+        report.update(exact=f"{n_exact}/32", exact_or_near_tie=f"{n_ok}/32", hit_rate=round(hit_rate, 4),
+                      ttft_p50_off_ms=round(t_off, 2), ttft_p50_on_ms=round(t_on, 2), ttft_ratio=round(t_on / t_off, 3),
+                      ttft_speedup=round(t_off / t_on, 2))
+        print(f"M4a cache on vs off: exact={n_exact}/32 (>=31) exact_or_near_tie={n_ok}/32 (32)")
+        print(f"M4b hit_rate={hit_rate:.3f} (>=0.85)")
+        print(f"M4c TTFT p50 off={t_off:.1f}ms on={t_on:.1f}ms ratio={t_on / t_off:.3f} (<=0.5) ttft_speedup={t_off / t_on:.2f}x")
+        assert hit_rate >= 0.85
+        assert t_on <= 0.5 * t_off
+>       assert n_exact >= 31 and n_ok == 32
+E       assert (14 >= 31)
+
+tests/gpu/test_m4_gpu.py:74: AssertionError
+=========================== short test summary info ============================
+FAILED tests/gpu/test_m4_gpu.py::test_prefix_cache_on_vs_off - assert (14 >= 31)
+1 failed in 43.76s
+```
