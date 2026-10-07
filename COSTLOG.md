@@ -23,3 +23,8 @@ One row per GPU run (written automatically by `modal_app.py`). est $ = wall minu
 | 2026-10-07 03:19 | `modal run modal_app.py::bench --engine vllm --suite spec` | L4 | 22.3 | 0.417 | 4.31 | M8 bench vllm/spec: ok |
 | 2026-10-07 03:27 | `modal run modal_app.py::gpu_tests --suite m9` | L4 | 3.3 | 0.062 | 4.44 | M9 GPU tests: PASS |
 | 2026-10-07 03:32 | `modal run modal_app.py::bench --engine tinyserve --suite spec_dflash` | L4 | 4.8 | 0.089 | 4.44 | M8 bench tinyserve/spec_dflash: ok |
+| 2026-10-07 04:01 | `modal run modal_app.py::gpu_tests --suite m5` | L4 | 1.1 | 0.021 | 4.65 | M5 GPU tests: PASS |
+| 2026-10-07 04:05 | `modal run modal_app.py::gpu_tests --suite mtbench` | L4 | 2.3 | 0.043 | 4.92 | MTBENCH GPU tests: PASS |
+| 2026-10-07 04:07 | `modal run modal_app.py::gpu_tests --suite lossless` | L4 | 4.9 | 0.092 | 5.30 | LOSSLESS GPU tests: PASS |
+| 2026-10-07 04:14 | `modal run modal_app.py::gpu_tests --suite fp32` | L4 | 11.6 | 0.216 | 5.86 | FP32 GPU tests: PASS |
+| 2026-10-07 04:35 | `modal run modal_app.py::gpu_tests --suite m6` | L4 | 34.6 | 0.647 | 6.62 | M6 GPU tests: ERROR |

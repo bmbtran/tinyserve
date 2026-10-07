@@ -1,0 +1,30 @@
+{
+  "metrics": {
+    "tau": {
+      "i_turn1_512": 2.821,
+      "ii_turn1_2048": 3.078,
+      "turn2_only_2048": 3.543,
+      "iii_both_turns_2048": 3.293
+    },
+    "spec_steps": {
+      "i_turn1_512": 3176,
+      "ii_turn1_2048": 4560,
+      "turn2_only_2048": 3927,
+      "iii_both_turns_2048": 8487
+    },
+    "mean_output_tokens": {
+      "turn1_512": 278.9375,
+      "turn1_2048": 437.21875,
+      "turn2_2048": 432.71875
+    },
+    "finish_length_frac_turn1_512": 0.25
+  },
+  "tests": {
+    "test_mtbench_protocols": "passed"
+  },
+  "status": "PASS",
+  "finished_utc": "2026-10-07 04:05:17",
+  "git_sha": "5426ef5",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 0
+}

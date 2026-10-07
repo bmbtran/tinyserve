@@ -1,0 +1,21 @@
+A1 bf16 (graph verify) spec vs non-spec: exact=29/96 exact_or_near_tie=95/96
+  bf16 MISMATCH mtbench#21 at token 5 gap=0.5
+.A1 fp32 phase on 9 prompts (1 bf16 mismatches)
+  mtbench#21: bf16 mismatch at 5 (gap 0.5) | fp32 truth gap there 0.6616, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#2: bf16 near_tie at 129 (gap 0.125) | fp32 truth gap there 0.0636, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#3: bf16 near_tie at 9 (gap 0.0) | fp32 truth gap there 0.0063, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#4: bf16 near_tie at 56 (gap 0.25) | fp32 truth gap there 0.1394, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#5: bf16 near_tie at 58 (gap 0.25) | fp32 truth gap there 0.0293, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#8: bf16 near_tie at 14 (gap 0.125) | fp32 truth gap there 0.0406, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#9: bf16 near_tie at 95 (gap 0.0) | fp32 truth gap there 0.2198, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#10: bf16 near_tie at 95 (gap 0.0) | fp32 truth gap there 0.0820, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+  gsm8k#15: bf16 near_tie at 25 (gap 0.0) | fp32 truth gap there 0.2487, bf16 picks in fp32 top-2: True | fp32 spec vs non-spec: exact
+A1 fp32 spec vs non-spec: exact=9/9 ok=9/9; every bf16 mismatch exact in fp32: True
+.
+LOSSLESS PASS bf16_exact=29/96 bf16_exact_or_near_tie=95/96 fp32_pairs_exact=9/9 fp32_pairs_ok=9/9 bf16_mismatches_exact_in_fp32=True
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_lossless_gpu.py::test_1_bf16_production
+PASSED tests/gpu/test_lossless_gpu.py::test_2_fp32
+2 passed in 289.27s (0:04:49)

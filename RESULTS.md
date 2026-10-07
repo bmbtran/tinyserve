@@ -1002,3 +1002,80 @@ Command: `rm -rf ../tinyserve-verify && git clone -q . ../tinyserve-verify && cd
 79 passed, 1 deselected, 1 warning in 81.14s (0:01:21)
 warning: `VIRTUAL_ENV=C:\Users\tranb\projects\tinyserve\.venv` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
 ```
+
+## FIX D3 (CPU) — 2026-10-07 03:59:52 UTC — git `f646cb8`
+
+Command: `uv run pytest tests/cpu -q -m "not slow" && uv run pytest tests/cpu -q -m slow`  (exit code 0)
+
+```text
+........................................................................ [ 84%]
+.............                                                            [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\tranb\projects\tinyserve\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+85 passed, 1 deselected, 1 warning in 62.91s (0:01:02)
+.                                                                        [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\tranb\projects\tinyserve\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 85 deselected, 1 warning in 58.06s
+```
+
+## FIX D4: M5 re-run (GPU) — 2026-10-07 04:36:38 UTC — git `5426ef5`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m5`
+Source file: `results/verify/m5.log`
+Note: New code (fused projections, process server). PASS.
+
+```text
+captured graphs for batch sizes [1, 2, 4, 8, 16, 32, 64, 128]
+M5a graph vs eager: exact=32/32 (>=31) exact_or_near_tie=32/32 (32)
+.  bs=  1: graph 7.54 ms  eager 37.95 ms  speedup 5.03x
+  bs=  2: graph 7.85 ms  eager 39.50 ms  speedup 5.04x
+  bs=  4: graph 7.97 ms  eager 37.80 ms  speedup 4.74x
+  bs=  8: graph 8.24 ms  eager 37.97 ms  speedup 4.61x
+  bs= 16: graph 8.76 ms  eager 37.76 ms  speedup 4.31x
+  bs= 32: graph 10.16 ms  eager 38.19 ms  speedup 3.76x
+  bs= 64: graph 12.49 ms  eager 39.24 ms  speedup 3.14x
+  bs=128: graph 17.45 ms  eager 38.81 ms  speedup 2.22x
+M5b bs=1 ITL p50 graph/eager=0.199 (<=0.67)
+M5c bs=32 step graph=10.163ms eager=38.188ms (graph<=eager)
+.
+M5 PASS a_exact=32/32 a_exact_or_near_tie=32/32 b_bs1_graph_eager_ratio=0.199 c_bs32_graph_ms=10.163 c_bs32_eager_ms=38.188
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m5_gpu.py::test_a_graph_vs_eager_outputs
+PASSED tests/gpu/test_m5_gpu.py::test_b_c_itl
+2 passed in 51.19s
+```
+
+## FIX D4: M6 re-run (GPU) — 2026-10-07 04:36:40 UTC — git `5426ef5`
+
+Command: `uv run modal run modal_app.py::gpu_tests --suite m6`
+Source file: `results/verify/m6.log`
+Note: New code; server now runs the engine core in its own process. PASS; c=32 output 1,762.7 tok/s vs 1,387.2 before, ITL p50 14.1 vs 19.0 ms.
+
+```text
+tinyserve: serving Qwen/Qwen3-0.6B on http://127.0.0.1:8011 (KV blocks: 613)
+server healthy after 18s
+  openai: chat (stream) -> 'Three primary colors are **red, blue, and yellow**.'
+  openai: completions (stream) -> ' Paris. The capital of France is also the capital of the'
+  openai: chat (non-stream) -> 'Three primary colors are **red, blue, and yellow**.' usage=CompletionUsage(completion_tokens=14, prompt_tokens=17, total_tokens=31, completion_tokens_details=None, prompt_tokens_details=None)
+  openai: models -> ['Qwen/Qwen3-0.6B']
+.M6 c=32 x 64 req: errors=0 TTFT p50=459.272ms p99=553.875ms ITL p50=19.047ms p99=36.748ms output_tok_s=1387.23
+.
+M6 PASS errors=0
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_m6_gpu.py::test_openai_client_streaming
+PASSED tests/gpu/test_m6_gpu.py::test_concurrency_32_x_64
+2 passed in 33.77s
+```

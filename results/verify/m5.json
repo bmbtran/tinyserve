@@ -5,57 +5,57 @@
     "a_divergences": [],
     "itl_sweep": {
       "1": {
-        "graph_ms": 7.754,
-        "eager_ms": 39.075,
-        "speedup": 5.04
+        "graph_ms": 7.542,
+        "eager_ms": 37.949,
+        "speedup": 5.03
       },
       "2": {
-        "graph_ms": 8.091,
-        "eager_ms": 40.115,
-        "speedup": 4.96
+        "graph_ms": 7.846,
+        "eager_ms": 39.503,
+        "speedup": 5.04
       },
       "4": {
-        "graph_ms": 8.184,
-        "eager_ms": 39.751,
-        "speedup": 4.86
+        "graph_ms": 7.971,
+        "eager_ms": 37.805,
+        "speedup": 4.74
       },
       "8": {
-        "graph_ms": 8.598,
-        "eager_ms": 41.221,
-        "speedup": 4.79
+        "graph_ms": 8.239,
+        "eager_ms": 37.974,
+        "speedup": 4.61
       },
       "16": {
-        "graph_ms": 8.891,
-        "eager_ms": 40.838,
-        "speedup": 4.59
+        "graph_ms": 8.761,
+        "eager_ms": 37.757,
+        "speedup": 4.31
       },
       "32": {
-        "graph_ms": 10.177,
-        "eager_ms": 40.95,
-        "speedup": 4.02
+        "graph_ms": 10.163,
+        "eager_ms": 38.188,
+        "speedup": 3.76
       },
       "64": {
-        "graph_ms": 12.615,
-        "eager_ms": 40.689,
-        "speedup": 3.23
+        "graph_ms": 12.485,
+        "eager_ms": 39.243,
+        "speedup": 3.14
       },
       "128": {
-        "graph_ms": 17.368,
-        "eager_ms": 41.315,
-        "speedup": 2.38
+        "graph_ms": 17.451,
+        "eager_ms": 38.807,
+        "speedup": 2.22
       }
     },
-    "b_bs1_graph_eager_ratio": 0.198,
-    "c_bs32_graph_ms": 10.177,
-    "c_bs32_eager_ms": 40.95
+    "b_bs1_graph_eager_ratio": 0.199,
+    "c_bs32_graph_ms": 10.163,
+    "c_bs32_eager_ms": 38.188
   },
   "tests": {
     "test_a_graph_vs_eager_outputs": "passed",
     "test_b_c_itl": "passed"
   },
   "status": "PASS",
-  "finished_utc": "2026-10-07 02:01:39",
-  "git_sha": "58f0cf1",
+  "finished_utc": "2026-10-07 04:01:22",
+  "git_sha": "f646cb8",
   "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
   "pytest_returncode": 0
 }

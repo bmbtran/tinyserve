@@ -1,0 +1,29 @@
+{
+  "metrics": {
+    "b1b_fp32_vs_hf_max_abs": 9.059906005859375e-05,
+    "b1a_exact": "8/8",
+    "b1a_exact_or_fp32_near_tie": "8/8",
+    "b1a_divergences": [],
+    "b1b_flash_bf16_err_vs_fp32": 0.6149,
+    "b1b_torch_bf16_err_vs_fp32": 0.5802,
+    "b1b_flash_err_ratio": 1.06,
+    "b1b_flash_top1_vs_fp32": 0.9955,
+    "b1c_exact": "64/64",
+    "b1c_exact_or_fp32_near_tie": "64/64",
+    "b1c_divergences": [],
+    "b1d_exact": "32/32",
+    "b1d_exact_or_fp32_near_tie": "32/32",
+    "b1d_hit_rate": 0.9394,
+    "b1d_divergences": []
+  },
+  "tests": {
+    "test_b1a_b1b_vs_hf_fp32": "passed",
+    "test_b1c_batched_vs_sequential_fp32": "passed",
+    "test_b1d_prefix_cache_fp32": "passed"
+  },
+  "status": "PASS",
+  "finished_utc": "2026-10-07 04:14:14",
+  "git_sha": "5426ef5",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 0
+}

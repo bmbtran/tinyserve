@@ -1,0 +1,191 @@
+{
+  "metrics": {
+    "bf16_exact": "29/96",
+    "bf16_exact_or_near_tie": "95/96",
+    "picked": [
+      {
+        "k": 85,
+        "dataset": "mtbench",
+        "idx": 21,
+        "verdict": "mismatch",
+        "at": 5,
+        "gap": 0.5,
+        "spec_tok": 264,
+        "base_tok": 7407,
+        "fp32_top2": [
+          7407,
+          264
+        ],
+        "fp32_gap": 0.66156005859375,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 2,
+        "dataset": "gsm8k",
+        "idx": 2,
+        "verdict": "near_tie",
+        "at": 129,
+        "gap": 0.125,
+        "spec_tok": 315,
+        "base_tok": 1019,
+        "fp32_top2": [
+          315,
+          1019
+        ],
+        "fp32_gap": 0.063629150390625,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 3,
+        "dataset": "gsm8k",
+        "idx": 3,
+        "verdict": "near_tie",
+        "at": 9,
+        "gap": 0.0,
+        "spec_tok": 1447,
+        "base_tok": 382,
+        "fp32_top2": [
+          1447,
+          382
+        ],
+        "fp32_gap": 0.006328582763671875,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 4,
+        "dataset": "gsm8k",
+        "idx": 4,
+        "verdict": "near_tie",
+        "at": 56,
+        "gap": 0.25,
+        "spec_tok": 315,
+        "base_tok": 334,
+        "fp32_top2": [
+          334,
+          315
+        ],
+        "fp32_gap": 0.13937759399414062,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 5,
+        "dataset": "gsm8k",
+        "idx": 5,
+        "verdict": "near_tie",
+        "at": 58,
+        "gap": 0.25,
+        "spec_tok": 44364,
+        "base_tok": 1654,
+        "fp32_top2": [
+          44364,
+          1654
+        ],
+        "fp32_gap": 0.0292816162109375,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 8,
+        "dataset": "gsm8k",
+        "idx": 8,
+        "verdict": "near_tie",
+        "at": 14,
+        "gap": 0.125,
+        "spec_tok": 13,
+        "base_tok": 518,
+        "fp32_top2": [
+          518,
+          13
+        ],
+        "fp32_gap": 0.040599822998046875,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 9,
+        "dataset": "gsm8k",
+        "idx": 9,
+        "verdict": "near_tie",
+        "at": 95,
+        "gap": 0.0,
+        "spec_tok": 14085,
+        "base_tok": 7941,
+        "fp32_top2": [
+          14085,
+          7941
+        ],
+        "fp32_gap": 0.21979904174804688,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 10,
+        "dataset": "gsm8k",
+        "idx": 10,
+        "verdict": "near_tie",
+        "at": 95,
+        "gap": 0.0,
+        "spec_tok": 438,
+        "base_tok": 279,
+        "fp32_top2": [
+          438,
+          279
+        ],
+        "fp32_gap": 0.08195114135742188,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      },
+      {
+        "k": 15,
+        "dataset": "gsm8k",
+        "idx": 15,
+        "verdict": "near_tie",
+        "at": 25,
+        "gap": 0.0,
+        "spec_tok": 97219,
+        "base_tok": 1019,
+        "fp32_top2": [
+          97219,
+          1019
+        ],
+        "fp32_gap": 0.24872589111328125,
+        "bf16_choices_are_fp32_top2": true,
+        "fp32_verdict": "exact",
+        "fp32_at": null,
+        "fp32_div_gap": null
+      }
+    ],
+    "fp32_pairs_exact": "9/9",
+    "fp32_pairs_ok": "9/9",
+    "bf16_mismatches_exact_in_fp32": true
+  },
+  "tests": {
+    "test_1_bf16_production": "passed",
+    "test_2_fp32": "passed"
+  },
+  "status": "PASS",
+  "finished_utc": "2026-10-07 04:07:39",
+  "git_sha": "5426ef5",
+  "gpu": "NVIDIA L4, 580.95.05, 23034 MiB",
+  "pytest_returncode": 0
+}

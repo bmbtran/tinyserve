@@ -1,0 +1,13 @@
+C1 MT-Bench i_turn1_512: tau=2.821 over 3176 steps
+C1 MT-Bench ii_turn1_2048: tau=3.078 over 4560 steps
+C1 MT-Bench turn2_only_2048: tau=3.543 over 3927 steps
+C1 MT-Bench iii_both_turns_2048: tau=3.293 over 8487 steps
+C1 mean output tokens {'turn1_512': 278.9375, 'turn1_2048': 437.21875, 'turn2_2048': 432.71875}; turn-1 answers cut at 512: 25%
+C1 tau(iii) = 3.293 (>= 3.0; paper 4.35)
+.
+MTBENCH PASS finish_length_frac_turn1_512=0.25
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/gpu/test_mtbench_gpu.py::test_mtbench_protocols
+1 passed in 131.81s (0:02:11)
